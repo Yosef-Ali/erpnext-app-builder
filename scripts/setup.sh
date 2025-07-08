@@ -12,6 +12,10 @@ if [ ! -f .env ]; then
     echo "✅ Created .env file from template"
 fi
 
+# Install MCP server dependencies
+echo "📦 Installing MCP server dependencies..."
+cd mcp-server && npm install && cd ..
+
 # Build Docker images
 echo "📦 Building Docker images..."
 docker compose build --no-cache

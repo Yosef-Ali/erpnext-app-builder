@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   frappe:
     build: ./docker/frappe
@@ -9,6 +11,7 @@ services:
       - SITE_NAME=erpnext.local
       - DB_ROOT_PASS=admin
       - ADMIN_PASSWORD=admin
+      - DEVELOPER_MODE=1
     ports:
       - "8000:8000"
     networks:
@@ -18,20 +21,36 @@ services:
       - redis
 
   mcp-server:
-    build: 
-      context: ./mcp-server
-      dockerfile: ../docker/mcp-server/Dockerfile
+    build: ./docker/mcp-server
     container_name: frappe-mcp-server
     volumes:
       - ./mcp-server:/app
+      - ./app-builder:/app-builder:ro
       - frappe-bench:/frappe-bench:ro
     environment:
       - FRAPPE_URL=http://frappe:8000
       - MCP_PORT=3000
+      - NODE_ENV=development
     ports:
       - "3000:3000"
     depends_on:
       - frappe
+    networks:
+      - erpnext-network
+
+  app-builder-ui:
+    build: ./docker/app-builder-ui
+    container_name: erpnext-app-builder-ui
+    volumes:
+      - ./app-builder-ui:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_MCP_URL=http://localhost:3000
+      - REACT_APP_FRAPPE_URL=http://localhost:8000
+    ports:
+      - "3001:3000"
+    depends_on:
+      - mcp-server
     networks:
       - erpnext-network
 
