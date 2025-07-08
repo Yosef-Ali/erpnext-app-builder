@@ -1,1 +1,261 @@
-[]
+[
+  {
+    "name": "BOM",
+    "module": "Manufacturing",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 1,
+    "fields": [
+      {
+        "fieldname": "item",
+        "fieldtype": "Link",
+        "label": "Item",
+        "options": "Item",
+        "reqd": 1,
+        "bold": 1
+      },
+      {
+        "fieldname": "quantity",
+        "fieldtype": "Float",
+        "label": "Quantity",
+        "reqd": 1,
+        "default": 1
+      },
+      {
+        "fieldname": "uom",
+        "fieldtype": "Link",
+        "label": "UOM",
+        "options": "UOM"
+      },
+      {
+        "fieldname": "items",
+        "fieldtype": "Table",
+        "label": "Items",
+        "options": "BOM Item"
+      },
+      {
+        "fieldname": "operations",
+        "fieldtype": "Table",
+        "label": "Operations",
+        "options": "BOM Operation"
+      },
+      {
+        "fieldname": "total_cost",
+        "fieldtype": "Currency",
+        "label": "Total Cost",
+        "read_only": 1
+      }
+    ]
+  },
+  {
+    "name": "Work Order",
+    "module": "Manufacturing",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 1,
+    "fields": [
+      {
+        "fieldname": "item_code",
+        "fieldtype": "Link",
+        "label": "Item Code",
+        "options": "Item",
+        "reqd": 1,
+        "bold": 1
+      },
+      {
+        "fieldname": "bom_no",
+        "fieldtype": "Link",
+        "label": "BOM No",
+        "options": "BOM"
+      },
+      {
+        "fieldname": "qty",
+        "fieldtype": "Float",
+        "label": "Qty to Manufacture",
+        "reqd": 1
+      },
+      {
+        "fieldname": "produced_qty",
+        "fieldtype": "Float",
+        "label": "Manufactured Qty",
+        "read_only": 1
+      },
+      {
+        "fieldname": "wip_warehouse",
+        "fieldtype": "Link",
+        "label": "Work-in-Progress Warehouse",
+        "options": "Warehouse"
+      },
+      {
+        "fieldname": "fg_warehouse",
+        "fieldtype": "Link",
+        "label": "Target Warehouse",
+        "options": "Warehouse"
+      },
+      {
+        "fieldname": "planned_start_date",
+        "fieldtype": "Datetime",
+        "label": "Planned Start Date"
+      },
+      {
+        "fieldname": "planned_end_date",
+        "fieldtype": "Datetime",
+        "label": "Planned End Date"
+      },
+      {
+        "fieldname": "status",
+        "fieldtype": "Select",
+        "label": "Status",
+        "options": "Not Started\nIn Process\nCompleted\nStopped\nCancelled"
+      }
+    ]
+  },
+  {
+    "name": "Production Plan",
+    "module": "Manufacturing",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 1,
+    "fields": [
+      {
+        "fieldname": "company",
+        "fieldtype": "Link",
+        "label": "Company",
+        "options": "Company",
+        "reqd": 1
+      },
+      {
+        "fieldname": "from_date",
+        "fieldtype": "Date",
+        "label": "From Date",
+        "reqd": 1
+      },
+      {
+        "fieldname": "to_date",
+        "fieldtype": "Date",
+        "label": "To Date",
+        "reqd": 1
+      },
+      {
+        "fieldname": "po_items",
+        "fieldtype": "Table",
+        "label": "Items",
+        "options": "Production Plan Item"
+      },
+      {
+        "fieldname": "mr_items",
+        "fieldtype": "Table",
+        "label": "Material Request Planning",
+        "options": "Production Plan Material Request"
+      }
+    ]
+  },
+  {
+    "name": "Quality Inspection",
+    "module": "Manufacturing",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 1,
+    "fields": [
+      {
+        "fieldname": "inspection_type",
+        "fieldtype": "Select",
+        "label": "Inspection Type",
+        "options": "Incoming\nOutgoing\nIn Process"
+      },
+      {
+        "fieldname": "reference_type",
+        "fieldtype": "Select",
+        "label": "Reference Type",
+        "options": "Purchase Receipt\nPurchase Invoice\nDelivery Note\nSales Invoice\nStock Entry\nJob Card"
+      },
+      {
+        "fieldname": "reference_name",
+        "fieldtype": "Dynamic Link",
+        "label": "Reference Name",
+        "options": "reference_type"
+      },
+      {
+        "fieldname": "item_code",
+        "fieldtype": "Link",
+        "label": "Item Code",
+        "options": "Item"
+      },
+      {
+        "fieldname": "sample_size",
+        "fieldtype": "Float",
+        "label": "Sample Size"
+      },
+      {
+        "fieldname": "inspected_by",
+        "fieldtype": "Link",
+        "label": "Inspected By",
+        "options": "User"
+      },
+      {
+        "fieldname": "status",
+        "fieldtype": "Select",
+        "label": "Status",
+        "options": "Accepted\nRejected\nIn Process"
+      },
+      {
+        "fieldname": "readings",
+        "fieldtype": "Table",
+        "label": "Readings",
+        "options": "Quality Inspection Reading"
+      }
+    ]
+  },
+  {
+    "name": "Job Card",
+    "module": "Manufacturing",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 1,
+    "fields": [
+      {
+        "fieldname": "work_order",
+        "fieldtype": "Link",
+        "label": "Work Order",
+        "options": "Work Order",
+        "reqd": 1
+      },
+      {
+        "fieldname": "operation",
+        "fieldtype": "Data",
+        "label": "Operation",
+        "reqd": 1
+      },
+      {
+        "fieldname": "workstation",
+        "fieldtype": "Link",
+        "label": "Workstation",
+        "options": "Workstation"
+      },
+      {
+        "fieldname": "for_quantity",
+        "fieldtype": "Float",
+        "label": "For Quantity",
+        "reqd": 1
+      },
+      {
+        "fieldname": "time_logs",
+        "fieldtype": "Table",
+        "label": "Time Logs",
+        "options": "Job Card Time Log"
+      },
+      {
+        "fieldname": "total_time_in_mins",
+        "fieldtype": "Float",
+        "label": "Total Time in Mins",
+        "read_only": 1
+      },
+      {
+        "fieldname": "status",
+        "fieldtype": "Select",
+        "label": "Status",
+        "options": "Open\nWork In Progress\nCompleted\nMaterial Transferred\nOn Hold"
+      }
+    ]
+  }
+]

@@ -2,14 +2,14 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files first for better Docker layer caching
+COPY app-builder-ui/package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy app files
-COPY . .
+# Copy all app source files
+COPY app-builder-ui/ .
 
 EXPOSE 3000
 

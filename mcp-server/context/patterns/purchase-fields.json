@@ -1,1 +1,183 @@
-[]
+{
+  "supplier": [
+    {
+      "fieldname": "supplier_name",
+      "fieldtype": "Data",
+      "label": "Supplier Name",
+      "reqd": 1,
+      "bold": 1
+    },
+    {
+      "fieldname": "supplier_type",
+      "fieldtype": "Select",
+      "label": "Supplier Type",
+      "options": "Individual\nCompany"
+    },
+    {
+      "fieldname": "supplier_group",
+      "fieldtype": "Link",
+      "label": "Supplier Group",
+      "options": "Supplier Group"
+    },
+    {
+      "fieldname": "email_id",
+      "fieldtype": "Data",
+      "label": "Email",
+      "options": "Email"
+    },
+    {
+      "fieldname": "mobile_no",
+      "fieldtype": "Data",
+      "label": "Mobile Number"
+    },
+    {
+      "fieldname": "payment_terms",
+      "fieldtype": "Link",
+      "label": "Payment Terms",
+      "options": "Payment Terms Template"
+    }
+  ],
+  "purchase_order": [
+    {
+      "fieldname": "supplier",
+      "fieldtype": "Link",
+      "label": "Supplier",
+      "options": "Supplier",
+      "reqd": 1
+    },
+    {
+      "fieldname": "transaction_date",
+      "fieldtype": "Date",
+      "label": "Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "schedule_date",
+      "fieldtype": "Date",
+      "label": "Required By"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Items",
+      "options": "Purchase Order Item"
+    },
+    {
+      "fieldname": "grand_total",
+      "fieldtype": "Currency",
+      "label": "Grand Total",
+      "read_only": 1
+    },
+    {
+      "fieldname": "advance_paid",
+      "fieldtype": "Currency",
+      "label": "Advance Paid",
+      "read_only": 1
+    }
+  ],
+  "request_for_quotation": [
+    {
+      "fieldname": "suppliers",
+      "fieldtype": "Table",
+      "label": "Suppliers",
+      "options": "Request for Quotation Supplier"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Items",
+      "options": "Request for Quotation Item"
+    },
+    {
+      "fieldname": "message_for_supplier",
+      "fieldtype": "Text",
+      "label": "Message for Supplier"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "label": "Status",
+      "options": "Draft\nSubmitted\nReceived\nCancelled"
+    }
+  ],
+  "purchase_receipt": [
+    {
+      "fieldname": "supplier",
+      "fieldtype": "Link",
+      "label": "Supplier",
+      "options": "Supplier",
+      "reqd": 1
+    },
+    {
+      "fieldname": "posting_date",
+      "fieldtype": "Date",
+      "label": "Posting Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "supplier_delivery_note",
+      "fieldtype": "Data",
+      "label": "Supplier Delivery Note"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Items",
+      "options": "Purchase Receipt Item"
+    },
+    {
+      "fieldname": "grand_total",
+      "fieldtype": "Currency",
+      "label": "Grand Total",
+      "read_only": 1
+    }
+  ],
+  "purchase_invoice": [
+    {
+      "fieldname": "supplier",
+      "fieldtype": "Link",
+      "label": "Supplier",
+      "options": "Supplier",
+      "reqd": 1
+    },
+    {
+      "fieldname": "posting_date",
+      "fieldtype": "Date",
+      "label": "Posting Date",
+      "reqd": 1
+    },
+    {
+      "fieldname": "due_date",
+      "fieldtype": "Date",
+      "label": "Due Date"
+    },
+    {
+      "fieldname": "bill_no",
+      "fieldtype": "Data",
+      "label": "Supplier Invoice No"
+    },
+    {
+      "fieldname": "bill_date",
+      "fieldtype": "Date",
+      "label": "Supplier Invoice Date"
+    },
+    {
+      "fieldname": "items",
+      "fieldtype": "Table",
+      "label": "Items",
+      "options": "Purchase Invoice Item"
+    },
+    {
+      "fieldname": "grand_total",
+      "fieldtype": "Currency",
+      "label": "Grand Total",
+      "read_only": 1
+    },
+    {
+      "fieldname": "outstanding_amount",
+      "fieldtype": "Currency",
+      "label": "Outstanding Amount",
+      "read_only": 1
+    }
+  ]
+}

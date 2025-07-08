@@ -39,7 +39,9 @@ services:
       - erpnext-network
 
   app-builder-ui:
-    build: ./docker/app-builder-ui
+    build:
+      context: .
+      dockerfile: ./docker/app-builder-ui/Dockerfile
     container_name: erpnext-app-builder-ui
     volumes:
       - ./app-builder-ui:/app

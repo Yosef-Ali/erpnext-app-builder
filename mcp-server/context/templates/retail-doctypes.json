@@ -1,1 +1,234 @@
-[]
+[
+  {
+    "name": "POS Profile",
+    "module": "Retail",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 0,
+    "fields": [
+      {
+        "fieldname": "name",
+        "fieldtype": "Data",
+        "label": "POS Profile Name",
+        "reqd": 1,
+        "bold": 1
+      },
+      {
+        "fieldname": "company",
+        "fieldtype": "Link",
+        "label": "Company",
+        "options": "Company",
+        "reqd": 1
+      },
+      {
+        "fieldname": "warehouse",
+        "fieldtype": "Link",
+        "label": "Warehouse",
+        "options": "Warehouse",
+        "reqd": 1
+      },
+      {
+        "fieldname": "customer",
+        "fieldtype": "Link",
+        "label": "Customer",
+        "options": "Customer"
+      },
+      {
+        "fieldname": "currency",
+        "fieldtype": "Link",
+        "label": "Currency",
+        "options": "Currency"
+      },
+      {
+        "fieldname": "price_list",
+        "fieldtype": "Link",
+        "label": "Price List",
+        "options": "Price List"
+      }
+    ],
+    "permissions": [
+      {
+        "role": "Sales User",
+        "read": 1,
+        "write": 1,
+        "create": 1
+      },
+      {
+        "role": "Sales Manager",
+        "read": 1,
+        "write": 1,
+        "create": 1,
+        "delete": 1
+      }
+    ]
+  },
+  {
+    "name": "Store Location",
+    "module": "Retail",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 0,
+    "fields": [
+      {
+        "fieldname": "location_name",
+        "fieldtype": "Data",
+        "label": "Location Name",
+        "reqd": 1,
+        "bold": 1
+      },
+      {
+        "fieldname": "address",
+        "fieldtype": "Text",
+        "label": "Address"
+      },
+      {
+        "fieldname": "manager",
+        "fieldtype": "Link",
+        "label": "Store Manager",
+        "options": "Employee"
+      },
+      {
+        "fieldname": "warehouse",
+        "fieldtype": "Link",
+        "label": "Warehouse",
+        "options": "Warehouse"
+      },
+      {
+        "fieldname": "is_active",
+        "fieldtype": "Check",
+        "label": "Is Active",
+        "default": 1
+      }
+    ]
+  },
+  {
+    "name": "Loyalty Program",
+    "module": "Retail",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 0,
+    "fields": [
+      {
+        "fieldname": "program_name",
+        "fieldtype": "Data",
+        "label": "Program Name",
+        "reqd": 1,
+        "bold": 1
+      },
+      {
+        "fieldname": "program_type",
+        "fieldtype": "Select",
+        "label": "Program Type",
+        "options": "Single Tier\nMultiple Tier"
+      },
+      {
+        "fieldname": "auto_opt_in",
+        "fieldtype": "Check",
+        "label": "Auto Opt In"
+      },
+      {
+        "fieldname": "start_date",
+        "fieldtype": "Date",
+        "label": "Start Date"
+      },
+      {
+        "fieldname": "end_date",
+        "fieldtype": "Date",
+        "label": "End Date"
+      },
+      {
+        "fieldname": "expense_account",
+        "fieldtype": "Link",
+        "label": "Expense Account",
+        "options": "Account"
+      }
+    ]
+  },
+  {
+    "name": "Product Category",
+    "module": "Retail",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 0,
+    "fields": [
+      {
+        "fieldname": "category_name",
+        "fieldtype": "Data",
+        "label": "Category Name",
+        "reqd": 1,
+        "bold": 1
+      },
+      {
+        "fieldname": "parent_category",
+        "fieldtype": "Link",
+        "label": "Parent Category",
+        "options": "Product Category"
+      },
+      {
+        "fieldname": "description",
+        "fieldtype": "Text Editor",
+        "label": "Description"
+      },
+      {
+        "fieldname": "is_group",
+        "fieldtype": "Check",
+        "label": "Is Group"
+      },
+      {
+        "fieldname": "image",
+        "fieldtype": "Attach Image",
+        "label": "Image"
+      }
+    ]
+  },
+  {
+    "name": "Promotion",
+    "module": "Retail",
+    "doctype": "DocType",
+    "custom": 1,
+    "is_submittable": 0,
+    "fields": [
+      {
+        "fieldname": "promotion_name",
+        "fieldtype": "Data",
+        "label": "Promotion Name",
+        "reqd": 1,
+        "bold": 1
+      },
+      {
+        "fieldname": "promotion_type",
+        "fieldtype": "Select",
+        "label": "Promotion Type",
+        "options": "Percentage Discount\nFixed Amount Discount\nBuy X Get Y\nBundle Offer"
+      },
+      {
+        "fieldname": "start_date",
+        "fieldtype": "Date",
+        "label": "Start Date",
+        "reqd": 1
+      },
+      {
+        "fieldname": "end_date",
+        "fieldtype": "Date",
+        "label": "End Date",
+        "reqd": 1
+      },
+      {
+        "fieldname": "discount_percentage",
+        "fieldtype": "Float",
+        "label": "Discount Percentage"
+      },
+      {
+        "fieldname": "discount_amount",
+        "fieldtype": "Currency",
+        "label": "Discount Amount"
+      },
+      {
+        "fieldname": "is_active",
+        "fieldtype": "Check",
+        "label": "Is Active",
+        "default": 1
+      }
+    ]
+  }
+]
