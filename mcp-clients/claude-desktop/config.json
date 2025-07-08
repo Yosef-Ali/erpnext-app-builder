@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "frappe-mcp": {
+      "command": "node",
+      "args": ["/Users/mekdesyared/erpnext-app-builder/mcp-server/server.js", "--stdio"],
+      "env": {
+        "FRAPPE_URL": "http://localhost:8000",
+        "MCP_DEBUG_MODE": "true"
+      }
+    }
+  }
+}

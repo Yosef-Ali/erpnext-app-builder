@@ -1,0 +1,8 @@
+{
+  "name": "app-builder",
+  "version": "1.0.0",
+  "description": "ERPNext App Builder Core",
+  "dependencies": {
+    "frappe": "latest"
+  }
+}

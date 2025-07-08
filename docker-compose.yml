@@ -1,0 +1,65 @@
+services:
+  frappe:
+    build: ./docker/frappe
+    container_name: erpnext-frappe
+    volumes:
+      - frappe-bench:/home/frappe/frappe-bench
+      - ./app-builder:/home/frappe/frappe-bench/apps/app_builder
+    environment:
+      - SITE_NAME=erpnext.local
+      - DB_ROOT_PASS=admin
+      - ADMIN_PASSWORD=admin
+    ports:
+      - "8000:8000"
+    networks:
+      - erpnext-network
+    depends_on:
+      - mariadb
+      - redis
+
+  mcp-server:
+    build: 
+      context: ./mcp-server
+      dockerfile: ../docker/mcp-server/Dockerfile
+    container_name: frappe-mcp-server
+    volumes:
+      - ./mcp-server:/app
+      - frappe-bench:/frappe-bench:ro
+    environment:
+      - FRAPPE_URL=http://frappe:8000
+      - MCP_PORT=3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - frappe
+    networks:
+      - erpnext-network
+
+  mariadb:
+    image: mariadb:10.6
+    container_name: erpnext-mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - erpnext-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: erpnext-redis
+    networks:
+      - erpnext-network
+
+volumes:
+  frappe-bench:
+  mariadb-data:
+
+networks:
+  erpnext-network:
+    driver: bridge
