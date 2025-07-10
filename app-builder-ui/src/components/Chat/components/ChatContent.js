@@ -23,7 +23,66 @@ const ChatContent = ({
 }) => {
     const { token } = theme.useToken();
     const hasMessages = messages.length > 0;
-    const { viewMode } = useChatViewStore();
+    const { viewMode, smartSwitch } = useChatViewStore();
+
+    // Dynamic switching logic
+    React.useEffect(() => {
+        // 1. Auto-switch from welcome to chat on first message
+        if (viewMode === 'welcome' && hasMessages) {
+            smartSwitch('chat', 'first_message');
+        }
+    }, [viewMode, hasMessages, smartSwitch]);
+
+    // Content analysis for smart switching
+    React.useEffect(() => {
+        if (messages.length > 0) {
+            const lastMessage = messages[messages.length - 1];
+            if (lastMessage && lastMessage.type === 'user') {
+                const content = lastMessage.content.toLowerCase();
+                
+                // Detect generation/output requests
+                const generationKeywords = [
+                    'generate app', 'create app', 'build app', 'show output', 
+                    'show result', 'create doctype', 'generate doctype',
+                    'build workflow', 'create workflow', 'show generated',
+                    'app generation', 'erpnext app', 'generate code'
+                ];
+                
+                const backToChatKeywords = [
+                    'back to chat', 'hide output', 'close canvas', 
+                    'chat only', 'focus on chat', 'minimize output'
+                ];
+                
+                // Switch to canvas mode for generation requests
+                if (generationKeywords.some(keyword => content.includes(keyword)) && viewMode !== 'chat+canvas') {
+                    smartSwitch('chat+canvas', 'generation_requested');
+                }
+                
+                // Switch back to chat for chat-focused requests
+                if (backToChatKeywords.some(keyword => content.includes(keyword)) && viewMode === 'chat+canvas') {
+                    smartSwitch('chat', 'chat_focused');
+                }
+            }
+        }
+    }, [messages, viewMode, smartSwitch]);
+
+    // Loading state detection for auto-canvas
+    React.useEffect(() => {
+        // Auto-switch to canvas when generation starts
+        if (isLoading && viewMode === 'chat') {
+            const lastMessage = messages[messages.length - 1];
+            if (lastMessage && lastMessage.content) {
+                const content = lastMessage.content.toLowerCase();
+                const isGenerationRequest = [
+                    'generate', 'create', 'build', 'make'
+                ].some(word => content.includes(word));
+                
+                if (isGenerationRequest) {
+                    smartSwitch('chat+canvas', 'generation_started');
+                }
+            }
+        }
+    }, [isLoading, viewMode, messages, smartSwitch]);
 
     // Force collapse sidebar ONLY for chat+canvas mode
     React.useEffect(() => {
