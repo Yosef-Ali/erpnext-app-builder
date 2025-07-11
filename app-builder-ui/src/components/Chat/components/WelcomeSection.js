@@ -274,8 +274,7 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
 
     return (
         <div style={{
-            height: '100%',
-            overflow: 'hidden', // Prevent container overflow
+            minHeight: '100%',
             background: token.colorBgContainer,
             display: 'flex',
             flexDirection: 'column'
@@ -461,11 +460,9 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
 
             {/* Templates Section - Full Width, Separate Container */}
             <div className="template-grid" style={{ 
-                flex: 1,
                 padding: '0 24px 24px 24px', // Reduce bottom padding
                 display: 'flex',
                 justifyContent: 'center',
-                overflow: 'auto', // Allow scrolling for template cards
                 minHeight: 0 // Remove fixed height constraint
             }}>
                 <div style={{ 
@@ -475,11 +472,15 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
                     <Tabs
                         defaultActiveKey="all"
                         centered
+                        size="large"
+                        type="line"
                         items={templateCategories.map(category => ({
                             key: category.key,
                             label: category.label,
                             children: (
-                                <Row gutter={[16, 16]}>
+                                <Row gutter={[16, 16]} style={{
+                                    paddingTop: '24px'
+                                }}>
                                     {category.templates.map(renderTemplateCard)}
                                 </Row>
                             )

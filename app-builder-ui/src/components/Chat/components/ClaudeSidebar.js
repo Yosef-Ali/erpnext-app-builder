@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Button, Typography, Avatar, Space, Tooltip, Divider, theme } from 'antd';
+import { Layout, Button, Typography, Avatar, Space, Tooltip, Divider, theme, Dropdown } from 'antd';
 import { 
     PlusOutlined, 
     SettingOutlined, 
@@ -7,7 +7,10 @@ import {
     MessageOutlined,
     CheckCircleOutlined,
     ClockCircleOutlined,
-    LoadingOutlined
+    LoadingOutlined,
+    UserOutlined,
+    LogoutOutlined,
+    ProfileOutlined
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -72,9 +75,11 @@ const ClaudeSidebar = ({
                 background: token.colorBgLayout,
                 borderRight: `1px solid ${token.colorBorderSecondary}`,
                 height: '100vh',
+                minHeight: '100vh',
                 position: 'fixed',
                 left: 0,
                 top: 0,
+                bottom: 0,
                 zIndex: 100,
                 boxShadow: '2px 0 8px rgba(0,0,0,0.06)',
                 transform: isMobile 
@@ -94,7 +99,7 @@ const ClaudeSidebar = ({
                 <div style={{
                     padding: '12px 16px 8px 16px',
                     borderBottom: `1px solid ${token.colorBorderSecondary}`,
-                    background: token.colorBgContainer
+                    background: token.colorBgLayout
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <Avatar 
@@ -242,12 +247,13 @@ const ClaudeSidebar = ({
                         ))
                     )}
                 </div>
-
-                {/* Footer Actions - Separate Lines */}
+                
+                {/* Footer Actions - Stuck to Bottom */}
                 <div style={{
-                    padding: '8px 16px 12px 16px',
+                    padding: '8px 16px 8px 16px',
                     borderTop: `1px solid ${token.colorBorderSecondary}`,
-                    background: token.colorBgContainer
+                    background: token.colorBgLayout,
+                    marginTop: 'auto'
                 }}>
                     {/* Dark Mode Toggle - First Line */}
                     <div style={{ marginBottom: '8px' }}>
@@ -262,7 +268,8 @@ const ClaudeSidebar = ({
                                     alignItems: 'center',
                                     justifyContent: isCollapsed ? 'center' : 'flex-start',
                                     padding: '8px 12px',
-                                    borderRadius: '6px'
+                                    borderRadius: '6px',
+                                    background: 'transparent'
                                 }}
                             >
                                 {!isCollapsed && (
@@ -275,7 +282,7 @@ const ClaudeSidebar = ({
                     </div>
                     
                     {/* Settings - Second Line */}
-                    <div>
+                    <div style={{ marginBottom: '8px' }}>
                         <Tooltip title="Settings" placement={isCollapsed ? "right" : "top"}>
                             <Button
                                 type="text"
@@ -286,7 +293,8 @@ const ClaudeSidebar = ({
                                     alignItems: 'center',
                                     justifyContent: isCollapsed ? 'center' : 'flex-start',
                                     padding: '8px 12px',
-                                    borderRadius: '6px'
+                                    borderRadius: '6px',
+                                    background: 'transparent'
                                 }}
                             >
                                 {!isCollapsed && (
@@ -294,6 +302,89 @@ const ClaudeSidebar = ({
                                 )}
                             </Button>
                         </Tooltip>
+                    </div>
+                    
+                    {/* User Profile - Third Line */}
+                    <div style={{ marginBottom: '0' }}>
+                        <Dropdown
+                            menu={{
+                                items: [
+                                    {
+                                        key: 'profile',
+                                        label: 'Profile',
+                                        icon: <ProfileOutlined />,
+                                    },
+                                    {
+                                        key: 'account',
+                                        label: 'Account Settings',
+                                        icon: <UserOutlined />,
+                                    },
+                                    {
+                                        type: 'divider'
+                                    },
+                                    {
+                                        key: 'logout',
+                                        label: 'Sign Out',
+                                        icon: <LogoutOutlined />,
+                                        danger: true
+                                    }
+                                ]
+                            }}
+                            trigger={['click']}
+                            placement={isCollapsed ? 'topRight' : 'topLeft'}
+                        >
+                            <Button
+                                type="text"
+                                style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                                    padding: '8px 12px',
+                                    borderRadius: '6px',
+                                    background: 'transparent',
+                                    height: 'auto',
+                                    minHeight: '40px'
+                                }}
+                            >
+                                <Avatar 
+                                    size={24} 
+                                    icon={<UserOutlined />} 
+                                    style={{
+                                        backgroundColor: token.colorPrimary,
+                                        flexShrink: 0
+                                    }}
+                                />
+                                {!isCollapsed && (
+                                    <div style={{ 
+                                        marginLeft: '8px', 
+                                        textAlign: 'left',
+                                        overflow: 'hidden',
+                                        flex: 1
+                                    }}>
+                                        <div style={{ 
+                                            fontSize: '13px', 
+                                            fontWeight: 500,
+                                            color: token.colorText,
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                        }}>
+                                            Administrator
+                                        </div>
+                                        <div style={{ 
+                                            fontSize: '11px', 
+                                            color: token.colorTextSecondary,
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                        }}>
+                                            admin@example.com
+                                        </div>
+                                    </div>
+                                )}
+                            </Button>
+                        </Dropdown>
                     </div>
                 </div>
             </div>

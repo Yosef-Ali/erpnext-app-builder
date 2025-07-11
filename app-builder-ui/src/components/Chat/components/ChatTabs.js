@@ -108,8 +108,7 @@ const ChatTabs = ({
         label: renderTabLabel(tab),
         children: (
             <div style={{
-                height: 'calc(100vh - 140px)', // Adjust based on header height
-                overflow: 'hidden',
+                minHeight: 'calc(100vh - 140px)', // Adjust based on header height
                 background: token.colorBgContainer
             }}>
                 {tab.content || (

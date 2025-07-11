@@ -1,14 +1,12 @@
 /* App Builder with Ant Design Layout */
 .app-builder-container {
-    height: 100vh !important;
+    min-height: 100vh !important;
     background: var(--ant-color-bg-layout) !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    overflow: hidden;
 }
 
 /* Claude Desktop-style Sidebar */
 .claude-sidebar {
-    background: var(--ant-color-bg-layout) !important;
     border-right: 1px solid var(--ant-color-border-secondary) !important;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06) !important;
 }
@@ -16,7 +14,8 @@
 .claude-sidebar .ant-layout-sider-children {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
 }
 
@@ -41,7 +40,7 @@
 
 /* Chat Tabs Container */
 .chat-tabs-container {
-    height: 100vh;
+    min-height: 100vh;
     background: var(--ant-color-bg-container);
 }
 
@@ -51,78 +50,16 @@
 
 .chat-tabs-container .ant-tabs-content-holder {
     overflow: auto; /* Allow scrolling instead of hidden */
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
     position: relative;
-    height: calc(100vh - 60px); /* Account for tab header */
+    min-height: calc(100vh - 60px); /* Account for tab header */
 }
 
 .chat-tabs-container .ant-tabs-tabpane {
-    height: 100%;
+    min-height: 100%;
     overflow: auto; /* Allow scrolling for content */
 }
 
-/* Tab Navigation Styling */
-.chat-tabs-container .ant-tabs-nav {
-    margin-bottom: 0 !important;
-    background: var(--ant-color-bg-layout);
-    border-bottom: 1px solid var(--ant-color-border-secondary);
-    padding: 0 !important;
-}
-
-.chat-tabs-container .ant-tabs-nav-wrap {
-    padding: 0 !important;
-}
-
-/* Individual tab styling */
-.chat-tabs-container .ant-tabs-tab {
-    padding: 16px 24px !important;
-    margin-right: 0 !important;
-    border: none !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    color: var(--ant-color-text-secondary) !important;
-    font-weight: 400;
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-/* Tab hover effect */
-.chat-tabs-container .ant-tabs-tab:not(.ant-tabs-tab-disabled):hover {
-    background: var(--ant-color-fill-quaternary) !important;
-    color: var(--ant-color-text) !important;
-}
-
-/* Active tab styling */
-.chat-tabs-container .ant-tabs-tab-active {
-    background: var(--ant-color-bg-container) !important;
-    color: var(--ant-color-primary) !important;
-    font-weight: 500;
-}
-
-/* Active tab indicator line */
-.chat-tabs-container .ant-tabs-ink-bar {
-    background: var(--ant-color-primary) !important;
-    height: 3px !important;
-    border-radius: 0 !important;
-}
-
-/* Disabled/muted tabs styling */
-.chat-tabs-container .ant-tabs-tab-disabled {
-    opacity: 0.35 !important;
-    pointer-events: none;
-    color: var(--ant-color-text-quaternary) !important;
-    background: transparent !important;
-}
-
-/* Muted tabs should still be visible but clearly inactive */
-.chat-tabs-container .ant-tabs-tab-disabled .ant-tabs-tab-btn {
-    cursor: not-allowed;
-}
-
-/* Remove any default borders */
-.chat-tabs-container .ant-tabs-nav::before {
-    display: none !important;
-}
+/* Clean Ant Design Tabs - No Custom Styling */
 
 /* Tab Content Areas */
 .tab-content-placeholder {
@@ -391,6 +328,8 @@
     transform: translateY(-4px) scale(1.02);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15) !important;
 }
+
+/* Clean Welcome Section Tabs - Default Ant Design Styling */
 
 /* Custom scrollbar */
 .chat-messages::-webkit-scrollbar {
