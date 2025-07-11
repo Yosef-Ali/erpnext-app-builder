@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Button, Typography, Avatar, Space, Tooltip, Divider, theme, Dropdown } from 'antd';
+import { Layout, Button, Typography, Avatar, Space, Tooltip, Divider, theme, Dropdown, Input, Modal, message } from 'antd';
 import { 
     PlusOutlined, 
     SettingOutlined, 
@@ -10,7 +10,10 @@ import {
     LoadingOutlined,
     UserOutlined,
     LogoutOutlined,
-    ProfileOutlined
+    ProfileOutlined,
+    MoreOutlined,
+    EditOutlined,
+    DeleteOutlined
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -26,10 +29,15 @@ const ClaudeSidebar = ({
     onSelectChat,
     onToggleTheme,
     isDarkMode = false,
-    currentChatId = null
+    currentChatId = null,
+    onRenameChat,
+    onDeleteChat
 }) => {
     const { token } = theme.useToken();
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [renameModalVisible, setRenameModalVisible] = useState(false);
+    const [renamingChatId, setRenamingChatId] = useState(null);
+    const [newChatTitle, setNewChatTitle] = useState('');
     
     useEffect(() => {
         const handleResize = () => {
@@ -63,6 +71,54 @@ const ClaudeSidebar = ({
         if (diffInHours < 48) return 'Yesterday';
         return `${Math.floor(diffInHours / 24)}d ago`;
     };
+
+    const handleRenameChat = (chatId, currentTitle) => {
+        setRenamingChatId(chatId);
+        setNewChatTitle(currentTitle);
+        setRenameModalVisible(true);
+    };
+
+    const handleConfirmRename = () => {
+        if (newChatTitle.trim() && onRenameChat) {
+            onRenameChat(renamingChatId, newChatTitle.trim());
+            message.success('Chat renamed successfully');
+        }
+        setRenameModalVisible(false);
+        setRenamingChatId(null);
+        setNewChatTitle('');
+    };
+
+    const handleDeleteChat = (chatId, chatTitle) => {
+        Modal.confirm({
+            title: 'Delete Chat',
+            content: `Are you sure you want to delete "${chatTitle}"?`,
+            okText: 'Delete',
+            okType: 'danger',
+            cancelText: 'Cancel',
+            onOk: () => {
+                if (onDeleteChat) {
+                    onDeleteChat(chatId);
+                    message.success('Chat deleted successfully');
+                }
+            }
+        });
+    };
+
+    const getChatActions = (chat) => [
+        {
+            key: 'rename',
+            label: 'Rename',
+            icon: <EditOutlined />,
+            onClick: () => handleRenameChat(chat.id, chat.title)
+        },
+        {
+            key: 'delete',
+            label: 'Delete',
+            icon: <DeleteOutlined />,
+            danger: true,
+            onClick: () => handleDeleteChat(chat.id, chat.title)
+        }
+    ];
 
     return (
         <Sider
@@ -186,61 +242,98 @@ const ClaudeSidebar = ({
                         chatHistory.map((chat) => (
                             <div
                                 key={chat.id}
-                                onClick={() => onSelectChat && onSelectChat(chat)}
                                 style={{
                                     padding: isCollapsed ? '8px' : '8px 16px',
                                     margin: '2px 8px',
                                     borderRadius: '6px',
-                                    cursor: 'pointer',
                                     background: currentChatId === chat.id ? token.colorPrimaryBg : 'transparent',
                                     border: currentChatId === chat.id ? `1px solid ${token.colorPrimary}` : '1px solid transparent',
-                                    transition: 'all 0.2s ease'
+                                    transition: 'all 0.2s ease',
+                                    position: 'relative'
                                 }}
-                                onMouseEnter={(e) => {
-                                    if (currentChatId !== chat.id) {
-                                        e.target.style.background = token.colorBgTextHover;
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    if (currentChatId !== chat.id) {
-                                        e.target.style.background = 'transparent';
-                                    }
-                                }}
+                                className="chat-history-item"
                             >
                                 {isCollapsed ? (
                                     <Tooltip title={chat.title} placement="right">
-                                        <div style={{ textAlign: 'center' }}>
+                                        <div 
+                                            style={{ textAlign: 'center', cursor: 'pointer' }}
+                                            onClick={() => onSelectChat && onSelectChat(chat)}
+                                        >
                                             <span style={{ fontSize: '16px' }}>
                                                 {chat.title.split(' ')[0]}
                                             </span>
                                         </div>
                                     </Tooltip>
                                 ) : (
-                                    <div>
-                                        <div style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            marginBottom: '4px'
+                                    <div style={{ position: 'relative' }}>
+                                        {/* More button positioned at top right */}
+                                        <div style={{ 
+                                            position: 'absolute', 
+                                            top: '0px', 
+                                            right: '0px', 
+                                            zIndex: 1 
                                         }}>
-                                            <Text
-                                                style={{
-                                                    fontSize: '13px',
-                                                    fontWeight: currentChatId === chat.id ? 500 : 400,
-                                                    color: currentChatId === chat.id ? token.colorPrimary : token.colorText
+                                            <Dropdown
+                                                menu={{
+                                                    items: getChatActions(chat)
                                                 }}
-                                                ellipsis={{ tooltip: chat.title }}
+                                                trigger={['click']}
+                                                placement="bottomRight"
                                             >
-                                                {chat.title}
-                                            </Text>
-                                            {getStatusIcon(chat.status)}
+                                                <Button
+                                                    type="text"
+                                                    icon={<MoreOutlined />}
+                                                    size="small"
+                                                    style={{
+                                                        color: token.colorTextSecondary,
+                                                        border: 'none',
+                                                        padding: '4px',
+                                                        width: '20px',
+                                                        height: '20px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        opacity: 0.7
+                                                    }}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                />
+                                            </Dropdown>
                                         </div>
-                                        <Text
-                                            type="secondary"
-                                            style={{ fontSize: '11px' }}
+                                        
+                                        {/* Chat content */}
+                                        <div 
+                                            style={{ 
+                                                cursor: 'pointer',
+                                                paddingRight: '24px' // Make room for more button
+                                            }}
+                                            onClick={() => onSelectChat && onSelectChat(chat)}
                                         >
-                                            {formatDate(chat.date)}
-                                        </Text>
+                                            {/* Title row - full width */}
+                                            <div style={{ marginBottom: '4px' }}>
+                                                <Text
+                                                    style={{
+                                                        fontSize: '13px',
+                                                        fontWeight: currentChatId === chat.id ? 500 : 400,
+                                                        color: currentChatId === chat.id ? token.colorPrimary : token.colorText,
+                                                        display: 'block',
+                                                        width: '100%'
+                                                    }}
+                                                    ellipsis={{ tooltip: chat.title }}
+                                                >
+                                                    {chat.title}
+                                                </Text>
+                                            </div>
+                                            
+                                            {/* Time row */}
+                                            <div>
+                                                <Text
+                                                    type="secondary"
+                                                    style={{ fontSize: '11px' }}
+                                                >
+                                                    {formatDate(chat.date)}
+                                                </Text>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -388,6 +481,28 @@ const ClaudeSidebar = ({
                     </div>
                 </div>
             </div>
+            
+            {/* Rename Modal */}
+            <Modal
+                title="Rename Chat"
+                open={renameModalVisible}
+                onOk={handleConfirmRename}
+                onCancel={() => {
+                    setRenameModalVisible(false);
+                    setRenamingChatId(null);
+                    setNewChatTitle('');
+                }}
+                okText="Rename"
+                cancelText="Cancel"
+            >
+                <Input
+                    value={newChatTitle}
+                    onChange={(e) => setNewChatTitle(e.target.value)}
+                    placeholder="Enter new chat title"
+                    onPressEnter={handleConfirmRename}
+                    autoFocus
+                />
+            </Modal>
         </Sider>
     );
 };

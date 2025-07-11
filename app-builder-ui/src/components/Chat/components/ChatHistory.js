@@ -131,13 +131,24 @@ const useChatHistory = () => {
         }
     };
     
+    const renameChat = (chatId, newTitle) => {
+        setChatHistory(prev => 
+            prev.map(chat => 
+                chat.id === chatId 
+                    ? { ...chat, title: newTitle, lastUpdated: new Date().toISOString() }
+                    : chat
+            ).sort((a, b) => new Date(b.lastUpdated) - new Date(a.lastUpdated))
+        );
+    };
+    
     return {
         chatHistory,
         currentChatId,
         addOrUpdateChat,
         selectChat,
         startNewChat,
-        deleteChat
+        deleteChat,
+        renameChat
     };
 };
 

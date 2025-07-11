@@ -25,8 +25,15 @@ const ChatContent = ({
 }) => {
     const { token } = theme.useToken();
     const hasMessages = messages.length > 0;
-    const { viewMode } = useChatViewStore();
+    const { viewMode, setViewMode } = useChatViewStore();
     const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+    
+    // Auto-switch to chat mode when there are messages
+    React.useEffect(() => {
+        if (messages.length > 0 && viewMode === 'welcome') {
+            setViewMode('chat');
+        }
+    }, [messages.length, viewMode, setViewMode]);
     
     React.useEffect(() => {
         const handleResize = () => {

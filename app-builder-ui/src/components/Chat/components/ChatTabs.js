@@ -68,37 +68,20 @@ const ChatTabs = ({
     ];
 
     const renderTabLabel = (tab) => {
-        const state = currentTabStates[tab.key];
-        const isMuted = state.muted;
-        const hasNotification = state.hasNotification;
-
         return (
             <span style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
-                opacity: isMuted ? 0.5 : 1,
-                transition: 'opacity 0.3s ease'
+                gap: '6px'
             }}>
                 {tab.icon}
                 <span>{tab.label}</span>
-                {hasNotification && (
-                    <Badge
-                        size="small"
-                        style={{
-                            backgroundColor: token.colorError,
-                            marginLeft: '4px'
-                        }}
-                    />
-                )}
             </span>
         );
     };
 
     const handleTabChange = (key) => {
-        const state = currentTabStates[key];
-        // Don't allow switching to muted tabs
-        if (!state.muted && onTabChange) {
+        if (onTabChange) {
             onTabChange(key);
         }
     };
@@ -122,17 +105,13 @@ const ChatTabs = ({
                         <div style={{ textAlign: 'center' }}>
                             {tab.icon}
                             <div style={{ marginTop: '8px', fontSize: '14px' }}>
-                                {currentTabStates[tab.key].muted
-                                    ? `${tab.label} will be available after completing previous steps`
-                                    : `${tab.label} content will appear here`
-                                }
+                                {`${tab.label} content will appear here`}
                             </div>
                         </div>
                     </div>
                 )}
             </div>
-        ),
-        disabled: currentTabStates[tab.key].muted
+        )
     }));
 
     return (
@@ -156,7 +135,6 @@ const ChatTabs = ({
                     display: 'flex',
                     alignItems: 'center'
                 }}
-                tabBarGutter={0}
                 tabBarExtraContent={{
                     left: (
                         <Button

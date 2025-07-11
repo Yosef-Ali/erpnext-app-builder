@@ -41,7 +41,9 @@ const AppBuilderChat = () => {
         currentChatId,
         addOrUpdateChat,
         selectChat,
-        startNewChat
+        startNewChat,
+        renameChat,
+        deleteChat
     } = useChatHistory();
 
     // Tab states for progressive activation
@@ -206,6 +208,10 @@ const AppBuilderChat = () => {
 
     const handleSelectChat = (chat) => {
         selectChat(chat);
+        // Auto-switch to chat-only mode when selecting Auto Parts App
+        if (chat.title && chat.title.includes('Auto Parts App')) {
+            setActiveTab('chat');
+        }
         message.info(`Loaded conversation: ${chat.title}`);
     };
 
@@ -278,6 +284,8 @@ const AppBuilderChat = () => {
                     onToggleTheme={toggleDarkMode}
                     isDarkMode={isDarkMode}
                     currentChatId={currentChatId}
+                    onRenameChat={renameChat}
+                    onDeleteChat={deleteChat}
                 />
 
                 {/* Main Content Area */}
