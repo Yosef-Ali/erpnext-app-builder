@@ -1,71 +1,70 @@
-// Workflow Detector Hook
+// Workflow Detector Hook - Enhanced for Dental Clinic
 module.exports = {
-  version: '1.0.0',
-  description: 'Detects workflow patterns in PRD',
+  version: '1.1.0',
+  description: 'Detects workflow patterns in PRD with dental clinic focus',
   
   execute: async (data, context) => {
-    const { content, sections } = data;
+    const { content, sections, entities } = data;
     const workflows = [];
     
-    // Common workflow indicators
-    const workflowPatterns = [
-      /(?:process|workflow|flow|sequence|steps?)(?:\s+(?:is|are|includes?))?\s*:?\s*([^.]+)/gi,
-      /(?:when|after|before|then|next|finally)\s+([^,]+)/gi,
-      /(?:approve|reject|submit|cancel|review)\s+([^.]+)/gi,
-      /(?:state|status)(?:es)?\s*(?:are|include)?\s*:?\s*([^.]+)/gi
+    // Get text to analyze
+    const text = sections ? sections.map(s => s.content).join(' ') : content;
+    const textLower = text.toLowerCase();
+    
+    // Healthcare/Dental specific workflows
+    const dentalWorkflows = [
+      {
+        name: 'appointment-workflow',
+        displayName: 'Appointment Workflow',
+        doctype: 'Patient Appointment',
+        keywords: ['appointment', 'booking', 'scheduling', 'reminder'],
+        states: ['Scheduled', 'Confirmed', 'Checked In', 'In Progress', 'Completed', 'Cancelled'],
+        type: 'healthcare'
+      },
+      {
+        name: 'treatment-workflow', 
+        displayName: 'Treatment Workflow',
+        doctype: 'Clinical Procedure',
+        keywords: ['treatment', 'procedure', 'dental', 'follow-up'],
+        states: ['Planned', 'Approved', 'In Progress', 'Completed', 'Follow-up Required'],
+        type: 'healthcare'
+      },
+      {
+        name: 'billing-workflow',
+        displayName: 'Billing Workflow',
+        doctype: 'Healthcare Invoice',
+        keywords: ['billing', 'payment', 'insurance', 'claim', 'invoice'],
+        states: ['Draft', 'Submitted', 'Insurance Pending', 'Partially Paid', 'Paid', 'Overdue'],
+        type: 'healthcare'
+      }
     ];
     
-    const text = sections ? sections.map(s => s.content).join(' ') : content;
-    
-    // Extract workflow indicators
-    const indicators = new Set();
-    for (const pattern of workflowPatterns) {
-      const matches = text.matchAll(pattern);
-      for (const match of matches) {
-        indicators.add(match[0].toLowerCase());
-      }
-    }
-    
-    // Identify common workflows
-    const commonWorkflows = {
-      'order-to-cash': ['order', 'delivery', 'invoice', 'payment'],
-      'procure-to-pay': ['purchase', 'receipt', 'bill', 'payment'],
-      'hire-to-retire': ['recruit', 'onboard', 'payroll', 'exit'],
-      'lead-to-customer': ['lead', 'opportunity', 'quotation', 'customer']
-    };
-    
-    // Match against common workflows
-    for (const [name, keywords] of Object.entries(commonWorkflows)) {
-      const matchCount = keywords.filter(keyword => 
-        Array.from(indicators).some(ind => ind.includes(keyword))
-      ).length;
+    // Check for dental workflows
+    for (const workflow of dentalWorkflows) {
+      const matchCount = workflow.keywords.filter(keyword => textLower.includes(keyword)).length;
       
+      // Need at least 2 keyword matches for confidence
       if (matchCount >= 2) {
+        // Check if we have the corresponding entity
+        const hasEntity = entities && entities.some(e => 
+          e.doctype === workflow.doctype || 
+          workflow.keywords.some(k => e.name.toLowerCase().includes(k))
+        );
+        
         workflows.push({
-          name,
-          confidence: matchCount / keywords.length,
-          matched_keywords: keywords.filter(k => 
-            Array.from(indicators).some(ind => ind.includes(k))
-          )
+          name: workflow.name,
+          displayName: workflow.displayName,
+          doctype: workflow.doctype,
+          type: workflow.type,
+          states: workflow.states,
+          confidence: matchCount / workflow.keywords.length,
+          matched_keywords: workflow.keywords.filter(k => textLower.includes(k)),
+          hasEntity: hasEntity
         });
       }
     }
     
-    // Extract custom workflows
-    const statePattern = /(?:states?|status(?:es)?)\s*(?:are|include)?\s*:?\s*([^.]+)/gi;
-    const stateMatches = text.matchAll(statePattern);
-    
-    for (const match of stateMatches) {
-      const states = match[1].split(/[,;]/).map(s => s.trim());
-      if (states.length > 1) {
-        workflows.push({
-          name: 'custom_workflow_' + workflows.length,
-          states,
-          confidence: 0.7,
-          custom: true
-        });
-      }
-    }
+    console.log('Workflow Detector found workflows:', workflows.map(w => w.displayName));
     
     return {
       ...data,
@@ -73,7 +72,8 @@ module.exports = {
       context: {
         ...context,
         workflowCount: workflows.length,
-        hasWorkflows: workflows.length > 0
+        hasWorkflows: workflows.length > 0,
+        primaryWorkflow: workflows.length > 0 ? workflows[0].name : null
       }
     };
   }

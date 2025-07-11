@@ -9,7 +9,8 @@ class ContextEngine {
       ai_patterns: new Map(),
       learning_data: new Map()
     };
-    this.templateManager = new (require('../templates/TemplateManager')).TemplateManager();
+    const TemplateManager = require('../templates/TemplateManager');
+    this.templateManager = new TemplateManager();
     this.analyzers = {
       document: require('./analyzers/document'),
       domain: require('./analyzers/domain'),
@@ -59,7 +60,7 @@ class ContextEngine {
 
   async analyze(input, type = 'prd') {
     const startTime = Date.now();
-    
+
     // Multi-layered AI analysis
     const analysis = {
       document: await this.analyzers.document.analyze(input),
@@ -77,7 +78,7 @@ class ContextEngine {
 
     // Enrich with context and historical patterns
     analysis.enriched = await this.enrichContextWithAI(analysis, input);
-    
+
     // Learn from this analysis if enabled
     if (this.learningEnabled) {
       await this.learnFromAnalysis(input, analysis);
@@ -161,7 +162,7 @@ class ContextEngine {
 
     // Entity overlap
     if (requirements.entities && template.entities) {
-      const overlap = requirements.entities.filter(e => 
+      const overlap = requirements.entities.filter(e =>
         template.entities.includes(e)
       ).length;
       score += (overlap / requirements.entities.length) * 0.3;
@@ -170,7 +171,7 @@ class ContextEngine {
 
     // Workflow match
     if (requirements.workflows && template.workflows) {
-      const workflowMatch = requirements.workflows.filter(w => 
+      const workflowMatch = requirements.workflows.filter(w =>
         template.workflows.includes(w)
       ).length;
       score += (workflowMatch / requirements.workflows.length) * 0.3;
@@ -210,7 +211,7 @@ class ContextEngine {
       analyze: async (input) => {
         const words = input.toLowerCase().split(/\s+/);
         const sentences = input.split(/[.!?]+/);
-        
+
         return {
           wordCount: words.length,
           sentenceCount: sentences.length,
@@ -266,7 +267,7 @@ class ContextEngine {
       extract: async (input, context) => {
         const entities = [];
         const patterns = this.contexts.ai_patterns.get('entity_indicators');
-        
+
         for (const [category, indicators] of Object.entries(patterns)) {
           for (const indicator of indicators) {
             const regex = new RegExp(`\\b${indicator}\\w*\\b`, 'gi');
@@ -292,7 +293,7 @@ class ContextEngine {
       map: async (input, context) => {
         const relationships = [];
         const patterns = this.contexts.ai_patterns.get('relationship_patterns');
-        
+
         const sentences = input.split(/[.!?]+/);
         for (const sentence of sentences) {
           const foundRelationships = this.extractRelationshipsFromSentence(sentence, patterns);
@@ -309,7 +310,7 @@ class ContextEngine {
       predict: async (input, context) => {
         const workflows = [];
         const signals = this.contexts.ai_patterns.get('workflow_signals');
-        
+
         for (const [type, indicators] of Object.entries(signals)) {
           const matches = this.findWorkflowIndicators(input, indicators);
           if (matches.length > 0) {
@@ -332,7 +333,7 @@ class ContextEngine {
     return {
       match: async (analysis, requirements) => {
         const matches = [];
-        
+
         for (const [name, template] of this.contexts.industry_templates) {
           const score = await this.calculateAdvancedTemplateScore(template, analysis, requirements);
           if (score > this.confidenceThreshold) {
@@ -354,7 +355,7 @@ class ContextEngine {
   // Enhanced Context Enrichment
   async enrichContextWithAI(analysis, input) {
     const enriched = this.enrichContext(analysis);
-    
+
     // Add AI-enhanced patterns
     enriched.aiPatterns = {
       entities: analysis.aiEntities,
@@ -365,10 +366,10 @@ class ContextEngine {
 
     // Cross-reference with historical data
     enriched.historicalInsights = this.getHistoricalInsights(analysis);
-    
+
     // Generate intelligent suggestions
     enriched.aiSuggestions = await this.generateAISuggestions(analysis, input);
-    
+
     // Predict potential issues
     enriched.riskAssessment = this.assessImplementationRisks(analysis);
 
@@ -387,10 +388,10 @@ class ContextEngine {
     };
 
     this.contexts.learning_data.set(Date.now().toString(), learningData);
-    
+
     // Update pattern weights based on success
     this.updatePatternWeights(learningData);
-    
+
     // Maintain learning data size
     if (this.contexts.learning_data.size > 1000) {
       const oldestKey = Array.from(this.contexts.learning_data.keys())[0];
@@ -413,7 +414,7 @@ class ContextEngine {
   extractSemanticEntities(input) {
     const entities = new Map();
     const words = input.toLowerCase().split(/\s+/);
-    
+
     // Business entity patterns
     const entityPatterns = {
       person: /\b(customer|client|user|employee|staff|manager|admin)\b/g,
@@ -435,7 +436,7 @@ class ContextEngine {
   identifySemanticRelationships(input) {
     const relationships = [];
     const sentences = input.split(/[.!?]+/);
-    
+
     for (const sentence of sentences) {
       const relationshipPatterns = [
         { pattern: /(\w+)\s+has\s+(\w+)/gi, type: 'has_relationship' },
@@ -497,7 +498,7 @@ class ContextEngine {
 
     // Use AI template matcher for additional scoring
     const aiMatches = await this.aiModels.templateMatcher.match(
-      { entities, workflows }, 
+      { entities, workflows },
       { industry }
     );
 
@@ -505,7 +506,7 @@ class ContextEngine {
     for (const template of templateRecommendations) {
       const aiMatch = aiMatches.find(match => match.name === template.name);
       const aiScore = aiMatch ? aiMatch.score : template.score;
-      
+
       const suggestion = {
         id: template.id,
         name: template.name,
@@ -533,8 +534,8 @@ class ContextEngine {
     // Add industry-specific templates that might not have been matched
     const industryTemplates = this.templateManager.getTemplatesByIndustry(industry);
     for (const template of industryTemplates) {
-      if (!suggestions.recommended.find(s => s.id === template.id) && 
-          !suggestions.alternative.find(s => s.id === template.id)) {
+      if (!suggestions.recommended.find(s => s.id === template.id) &&
+        !suggestions.alternative.find(s => s.id === template.id)) {
         suggestions.alternative.push({
           id: template.id,
           name: template.name,

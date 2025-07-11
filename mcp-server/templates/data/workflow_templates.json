@@ -1,0 +1,372 @@
+{
+    "standard_workflows": {
+        "approval_workflow": {
+            "name": "Document Approval",
+            "description": "Standard document approval workflow",
+            "states": [
+                {
+                    "state": "Draft",
+                    "style": "Warning",
+                    "doc_status": 0
+                },
+                {
+                    "state": "Pending Approval",
+                    "style": "Info",
+                    "doc_status": 0
+                },
+                {
+                    "state": "Approved",
+                    "style": "Success",
+                    "doc_status": 1
+                },
+                {
+                    "state": "Rejected",
+                    "style": "Danger",
+                    "doc_status": 2
+                }
+            ],
+            "transitions": [
+                {
+                    "state": "Draft",
+                    "action": "Submit for Approval",
+                    "next_state": "Pending Approval",
+                    "allowed": "Employee"
+                },
+                {
+                    "state": "Pending Approval",
+                    "action": "Approve",
+                    "next_state": "Approved",
+                    "allowed": "Manager"
+                },
+                {
+                    "state": "Pending Approval",
+                    "action": "Reject",
+                    "next_state": "Rejected",
+                    "allowed": "Manager"
+                }
+            ]
+        },
+        "order_processing": {
+            "name": "Order Processing",
+            "description": "Standard order processing workflow",
+            "states": [
+                {
+                    "state": "Draft",
+                    "style": "Warning",
+                    "doc_status": 0
+                },
+                {
+                    "state": "Confirmed",
+                    "style": "Info",
+                    "doc_status": 1
+                },
+                {
+                    "state": "Processing",
+                    "style": "Primary",
+                    "doc_status": 1
+                },
+                {
+                    "state": "Shipped",
+                    "style": "Success",
+                    "doc_status": 1
+                },
+                {
+                    "state": "Delivered",
+                    "style": "Success",
+                    "doc_status": 1
+                },
+                {
+                    "state": "Cancelled",
+                    "style": "Danger",
+                    "doc_status": 2
+                }
+            ],
+            "transitions": [
+                {
+                    "state": "Draft",
+                    "action": "Confirm Order",
+                    "next_state": "Confirmed",
+                    "allowed": "Sales User"
+                },
+                {
+                    "state": "Confirmed",
+                    "action": "Start Processing",
+                    "next_state": "Processing",
+                    "allowed": "Stock User"
+                },
+                {
+                    "state": "Processing",
+                    "action": "Ship Order",
+                    "next_state": "Shipped",
+                    "allowed": "Stock User"
+                },
+                {
+                    "state": "Shipped",
+                    "action": "Mark Delivered",
+                    "next_state": "Delivered",
+                    "allowed": "Sales User"
+                }
+            ]
+        },
+        "project_workflow": {
+            "name": "Project Workflow",
+            "description": "Standard project management workflow",
+            "states": [
+                {
+                    "state": "Planning",
+                    "style": "Warning",
+                    "doc_status": 0
+                },
+                {
+                    "state": "Active",
+                    "style": "Primary",
+                    "doc_status": 1
+                },
+                {
+                    "state": "On Hold",
+                    "style": "Info",
+                    "doc_status": 1
+                },
+                {
+                    "state": "Completed",
+                    "style": "Success",
+                    "doc_status": 1
+                },
+                {
+                    "state": "Cancelled",
+                    "style": "Danger",
+                    "doc_status": 2
+                }
+            ],
+            "transitions": [
+                {
+                    "state": "Planning",
+                    "action": "Start Project",
+                    "next_state": "Active",
+                    "allowed": "Project Manager"
+                },
+                {
+                    "state": "Active",
+                    "action": "Put On Hold",
+                    "next_state": "On Hold",
+                    "allowed": "Project Manager"
+                },
+                {
+                    "state": "On Hold",
+                    "action": "Resume",
+                    "next_state": "Active",
+                    "allowed": "Project Manager"
+                },
+                {
+                    "state": "Active",
+                    "action": "Complete",
+                    "next_state": "Completed",
+                    "allowed": "Project Manager"
+                }
+            ]
+        }
+    },
+    "industry_workflows": {
+        "retail": {
+            "pos_workflow": {
+                "name": "POS Transaction",
+                "states": [
+                    {
+                        "state": "Open",
+                        "style": "Warning",
+                        "doc_status": 0
+                    },
+                    {
+                        "state": "Payment",
+                        "style": "Info",
+                        "doc_status": 0
+                    },
+                    {
+                        "state": "Paid",
+                        "style": "Success",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Returned",
+                        "style": "Danger",
+                        "doc_status": 2
+                    }
+                ]
+            },
+            "inventory_workflow": {
+                "name": "Inventory Management",
+                "states": [
+                    {
+                        "state": "Available",
+                        "style": "Success",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Low Stock",
+                        "style": "Warning",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Out of Stock",
+                        "style": "Danger",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Reordered",
+                        "style": "Info",
+                        "doc_status": 1
+                    }
+                ]
+            }
+        },
+        "manufacturing": {
+            "production_workflow": {
+                "name": "Production Order",
+                "states": [
+                    {
+                        "state": "Draft",
+                        "style": "Warning",
+                        "doc_status": 0
+                    },
+                    {
+                        "state": "Planned",
+                        "style": "Info",
+                        "doc_status": 0
+                    },
+                    {
+                        "state": "In Process",
+                        "style": "Primary",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Quality Check",
+                        "style": "Info",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Completed",
+                        "style": "Success",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Stopped",
+                        "style": "Danger",
+                        "doc_status": 2
+                    }
+                ]
+            },
+            "quality_workflow": {
+                "name": "Quality Inspection",
+                "states": [
+                    {
+                        "state": "Pending",
+                        "style": "Warning",
+                        "doc_status": 0
+                    },
+                    {
+                        "state": "In Progress",
+                        "style": "Info",
+                        "doc_status": 0
+                    },
+                    {
+                        "state": "Accepted",
+                        "style": "Success",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Rejected",
+                        "style": "Danger",
+                        "doc_status": 1
+                    }
+                ]
+            }
+        },
+        "healthcare": {
+            "patient_workflow": {
+                "name": "Patient Care",
+                "states": [
+                    {
+                        "state": "Registered",
+                        "style": "Info",
+                        "doc_status": 0
+                    },
+                    {
+                        "state": "Admitted",
+                        "style": "Primary",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Under Treatment",
+                        "style": "Warning",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Discharged",
+                        "style": "Success",
+                        "doc_status": 1
+                    }
+                ]
+            },
+            "appointment_workflow": {
+                "name": "Appointment Management",
+                "states": [
+                    {
+                        "state": "Scheduled",
+                        "style": "Info",
+                        "doc_status": 0
+                    },
+                    {
+                        "state": "Confirmed",
+                        "style": "Primary",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "In Progress",
+                        "style": "Warning",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Completed",
+                        "style": "Success",
+                        "doc_status": 1
+                    },
+                    {
+                        "state": "Cancelled",
+                        "style": "Danger",
+                        "doc_status": 2
+                    }
+                ]
+            }
+        }
+    },
+    "common_patterns": {
+        "three_way_approval": {
+            "states": [
+                "Draft",
+                "Level 1 Approval",
+                "Level 2 Approval",
+                "Approved",
+                "Rejected"
+            ],
+            "description": "Three-level approval process"
+        },
+        "simple_approval": {
+            "states": [
+                "Draft",
+                "Pending",
+                "Approved",
+                "Rejected"
+            ],
+            "description": "Simple two-level approval"
+        },
+        "lifecycle_management": {
+            "states": [
+                "Created",
+                "Active",
+                "Inactive",
+                "Archived"
+            ],
+            "description": "Basic lifecycle management"
+        }
+    }
+}

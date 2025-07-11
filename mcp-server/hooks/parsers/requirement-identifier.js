@@ -35,6 +35,11 @@ module.exports = {
     
     const text = sections ? sections.map(s => s.content).join(' ') : content;
     
+    // Ensure text is a string
+    if (typeof text !== 'string') {
+      return { ...data, requirements, context };
+    }
+    
     // Extract requirements by type
     for (const [type, typePatterns] of Object.entries(patterns)) {
       for (const pattern of typePatterns) {

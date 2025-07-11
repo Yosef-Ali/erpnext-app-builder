@@ -1,11 +1,13 @@
-import React, { useRef, useEffect } from 'react';
-import { theme } from 'antd';
+import React, { useRef, useEffect, useState } from 'react';
+import { theme, message as antMessage } from 'antd';
+import MessageCard from './MessageCard';
 
 const SCROLL_ANIMATION_DURATION = 400;
 
-const MessageList = ({ messages, isLoading, messagesEndRef, onSetInputValue }) => {
+const MessageList = ({ messages, isLoading, messagesEndRef, onSetInputValue, processState }) => {
     const { token } = theme.useToken();
     const listRef = useRef(null);
+    const [expandedCards, setExpandedCards] = useState(new Set());
 
     // Auto-scroll to bottom with smooth animation when new message arrives
     useEffect(() => {
@@ -28,53 +30,82 @@ const MessageList = ({ messages, isLoading, messagesEndRef, onSetInputValue }) =
         }
     }, [messages]);
 
-    // Show loading animation in reply
-    const renderLoading = () => (
-        <div style={{ color: token.colorTextSecondary, fontStyle: 'italic', margin: '8px 0' }}>
-            <span className="loading-dots">
-                <span>.</span><span>.</span><span>.</span>
-            </span>
-        </div>
-    );
+    const handleCardToggle = (messageId) => {
+        const newExpanded = new Set(expandedCards);
+        if (newExpanded.has(messageId)) {
+            newExpanded.delete(messageId);
+        } else {
+            newExpanded.add(messageId);
+        }
+        setExpandedCards(newExpanded);
+    };
+
+    const handleEdit = (message) => {
+        // Set the message content to input for editing
+        if (onSetInputValue && typeof message.content === 'string') {
+            onSetInputValue(message.content);
+        }
+    };
+
+    const handleCopy = (content) => {
+        if (navigator.clipboard && typeof content === 'string') {
+            navigator.clipboard.writeText(content);
+        }
+    };
+
+    const handleRegenerate = (message) => {
+        // This would typically trigger a regeneration from this point
+        console.log('Regenerate from message:', message);
+        antMessage.info('Regeneration feature will be implemented with backend integration');
+    };
 
     return (
         <div
             ref={listRef}
+            className="message-list"
             style={{
                 flex: 1,
                 overflowY: 'auto',
-                padding: '24px 0 8px 0',
-                maxHeight: '60vh',
-                minHeight: 120,
+                padding: '16px 24px 8px 24px',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 12,
                 scrollbarWidth: 'thin',
                 scrollBehavior: 'smooth',
+                maxWidth: '800px',
+                margin: '0 auto',
+                width: '100%'
             }}
         >
-            {messages.map((msg, idx) => (
-                <div
-                    key={idx}
-                    style={{
-                        alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                        background: msg.role === 'user' ? token.colorPrimary : token.colorBgContainer,
-                        color: msg.role === 'user' ? '#fff' : token.colorText,
-                        borderRadius: 16,
-                        padding: '12px 18px',
-                        maxWidth: 480,
-                        wordBreak: 'break-word',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-                        fontSize: 16,
-                        transition: 'background 0.3s',
-                        cursor: msg.role === 'user' ? 'pointer' : 'default',
+            {messages.map((msg, idx) => {
+                const messageId = msg.id || msg.timestamp || idx;
+                return (
+                    <MessageCard
+                        key={messageId}
+                        message={msg}
+                        isExpanded={expandedCards.has(messageId)}
+                        onToggle={handleCardToggle}
+                        isProcessing={isLoading && idx === messages.length - 1}
+                        processState={processState}
+                        onEdit={handleEdit}
+                        onCopy={handleCopy}
+                        onRegenerate={handleRegenerate}
+                    />
+                );
+            })}
+            
+            {/* Loading indicator for new message */}
+            {isLoading && messages.length === 0 && (
+                <MessageCard
+                    message={{
+                        type: 'assistant',
+                        content: '',
+                        timestamp: new Date()
                     }}
-                    onClick={() => msg.role === 'user' && onSetInputValue && onSetInputValue(msg.content)}
-                >
-                    {msg.content}
-                </div>
-            ))}
-            {isLoading && renderLoading()}
+                    isProcessing={true}
+                    processState={processState || 'thinking'}
+                />
+            )}
+            
             <div ref={messagesEndRef} />
         </div>
     );

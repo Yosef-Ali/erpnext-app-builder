@@ -14,7 +14,11 @@ fi
 
 # Install MCP server dependencies
 echo "📦 Installing MCP server dependencies..."
-cd mcp-server && npm install && cd ..
+cd mcp-server && pnpm install && cd ..
+
+# Install React UI dependencies
+echo "📦 Installing React UI dependencies..."
+cd app-builder-ui && pnpm install && cd ..
 
 # Build Docker images
 echo "📦 Building Docker images..."

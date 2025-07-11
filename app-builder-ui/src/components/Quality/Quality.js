@@ -13,7 +13,10 @@ import {
   Button,
   Statistic,
   Timeline,
-  Badge
+  Badge,
+  message,
+  Modal,
+  Spin
 } from 'antd';
 import {
   CheckCircleOutlined,
@@ -22,7 +25,9 @@ import {
   InfoCircleOutlined,
   TrophyOutlined,
   BugOutlined,
-  ThunderboltOutlined
+  ThunderboltOutlined,
+  LoadingOutlined,
+  ToolOutlined
 } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
@@ -31,12 +36,41 @@ const Quality = () => {
   const location = useLocation();
   const [qualityReport, setQualityReport] = useState(null);
   const [generatedApp, setGeneratedApp] = useState(null);
+  const [fixingIssues, setFixingIssues] = useState(new Set());
+  const [fixedIssues, setFixedIssues] = useState(new Set());
 
   useEffect(() => {
+    // Try to get from location state first, then sessionStorage
     if (location.state?.qualityReport && location.state?.generatedApp) {
       setQualityReport(location.state.qualityReport);
       setGeneratedApp(location.state.generatedApp);
     } else {
+      // Try to get from sessionStorage
+      const storedQualityReport = sessionStorage.getItem('qualityReport');
+      const storedGeneratedApp = sessionStorage.getItem('generatedApp');
+      
+      if (storedQualityReport) {
+        try {
+          setQualityReport(JSON.parse(storedQualityReport));
+        } catch (error) {
+          console.error('Failed to parse stored quality report:', error);
+        }
+      }
+      
+      if (storedGeneratedApp) {
+        try {
+          setGeneratedApp(JSON.parse(storedGeneratedApp));
+        } catch (error) {
+          console.error('Failed to parse stored generated app:', error);
+        }
+      }
+    }
+    
+    
+  }, [location.state]); // Only depend on location.state
+  
+  useEffect(() => {
+    if (!qualityReport) {
       // Mock data for development
       setQualityReport({
         overall_score: 87,
@@ -50,6 +84,7 @@ const Quality = () => {
         },
         issues: [
           {
+            id: 'security_001',
             type: 'error',
             severity: 'high',
             category: 'Security',
@@ -57,9 +92,11 @@ const Quality = () => {
             description: 'Some DocTypes lack proper role-based permissions',
             suggestion: 'Define permissions for each role to ensure data security',
             affected_items: ['Product', 'Customer'],
-            fix_available: true
+            fix_available: true,
+            issue_type: 'permission_security'
           },
           {
+            id: 'performance_001',
             type: 'warning',
             severity: 'medium',
             category: 'Performance',
@@ -67,9 +104,11 @@ const Quality = () => {
             description: 'Frequently queried fields should have database indexes',
             suggestion: 'Add indexes on SKU, email, and date fields',
             affected_items: ['Product.sku', 'Customer.email'],
-            fix_available: true
+            fix_available: true,
+            issue_type: 'performance_optimization'
           },
           {
+            id: 'best_practices_001',
             type: 'info',
             severity: 'low',
             category: 'Best Practices',
@@ -77,7 +116,8 @@ const Quality = () => {
             description: 'Business logic validation can be improved',
             suggestion: 'Add server-side validation for critical business rules',
             affected_items: ['Sales Order'],
-            fix_available: false
+            fix_available: false,
+            issue_type: 'best_practices'
           }
         ],
         recommendations: [
@@ -165,6 +205,139 @@ const Quality = () => {
     }
   };
 
+  // Autofix functionality
+  const handleAutofix = async (issue) => {
+    if (!issue.fix_available) {
+      message.warning('This issue cannot be automatically fixed');
+      return;
+    }
+
+    setFixingIssues(prev => new Set([...prev, issue.id]));
+    
+    try {
+      const response = await fetch('http://localhost:3000/api/autofix/issue', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          issueId: issue.id,
+          issueType: issue.issue_type,
+          affectedItems: issue.affected_items,
+          appStructure: generatedApp
+        })
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        message.success(`Issue "${issue.message}" has been fixed!`);
+        setFixedIssues(prev => new Set([...prev, issue.id]));
+        
+        // Show fix details
+        Modal.info({
+          title: 'Fix Applied Successfully',
+          content: (
+            <div>
+              <p><strong>Issue:</strong> {issue.message}</p>
+              <p><strong>Fix Type:</strong> {result.fixResult.type}</p>
+              <p><strong>Fixes Applied:</strong> {result.fixResult.count}</p>
+              <div style={{ marginTop: '12px' }}>
+                <strong>Details:</strong>
+                <ul style={{ marginTop: '8px' }}>
+                  {result.fixResult.appliedFixes.map((fix, index) => (
+                    <li key={index}>{fix.description}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ),
+          width: 600
+        });
+      } else {
+        message.error(`Failed to fix issue: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Autofix error:', error);
+      message.error('Failed to connect to autofix service');
+    } finally {
+      setFixingIssues(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(issue.id);
+        return newSet;
+      });
+    }
+  };
+
+  const handleBulkAutofix = async () => {
+    const fixableIssues = qualityReport.issues.filter(issue => 
+      issue.fix_available && !fixedIssues.has(issue.id)
+    );
+
+    if (fixableIssues.length === 0) {
+      message.info('No issues available for bulk fixing');
+      return;
+    }
+
+    Modal.confirm({
+      title: 'Bulk Autofix',
+      content: `Are you sure you want to automatically fix all ${fixableIssues.length} fixable issues?`,
+      okText: 'Fix All',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        try {
+          const response = await fetch('http://localhost:3000/api/autofix/bulk', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              issues: fixableIssues,
+              appStructure: generatedApp
+            })
+          });
+
+          const result = await response.json();
+          
+          if (result.success) {
+            message.success(`Successfully fixed ${result.fixedCount} issues!`);
+            
+            // Mark all fixed issues
+            const newFixedIssues = new Set(fixedIssues);
+            result.fixResults.forEach(fix => newFixedIssues.add(fix.issueId));
+            setFixedIssues(newFixedIssues);
+            
+            // Show summary
+            Modal.info({
+              title: 'Bulk Fix Complete',
+              content: (
+                <div>
+                  <p><strong>Fixed Issues:</strong> {result.fixedCount}</p>
+                  <div style={{ marginTop: '12px' }}>
+                    <strong>Applied Fixes:</strong>
+                    <ul style={{ marginTop: '8px' }}>
+                      {result.fixResults.map((fix, index) => (
+                        <li key={index}>
+                          {fix.result.type}: {fix.result.count} changes
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ),
+              width: 600
+            });
+          } else {
+            message.error(`Bulk fix failed: ${result.error}`);
+          }
+        } catch (error) {
+          console.error('Bulk autofix error:', error);
+          message.error('Failed to connect to autofix service');
+        }
+      }
+    });
+  };
+
   if (!qualityReport) {
     return (
       <div className="page-header">
@@ -237,7 +410,7 @@ const Quality = () => {
         <Col xs={24} lg={16}>
           <Card title="Quality Metrics" className="content-card">
             <Row gutter={[16, 16]}>
-              {Object.entries(qualityReport.metrics).map(([key, value]) => (
+              {qualityReport.metrics && Object.entries(qualityReport.metrics).map(([key, value]) => (
                 <Col xs={12} sm={8} md={6} key={key}>
                   <Statistic
                     title={key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
@@ -253,6 +426,11 @@ const Quality = () => {
                   />
                 </Col>
               ))}
+              {!qualityReport.metrics && (
+                <Col span={24}>
+                  <Text type="secondary">No quality metrics available</Text>
+                </Col>
+              )}
             </Row>
           </Card>
         </Col>
@@ -265,7 +443,19 @@ const Quality = () => {
                 <BugOutlined />
                 <span>Issues Found ({qualityReport.issues?.length || 0})</span>
               </Space>
-            } 
+            }
+            extra={
+              qualityReport.issues?.some(issue => issue.fix_available && !fixedIssues.has(issue.id)) && (
+                <Button 
+                  type="primary" 
+                  size="small"
+                  icon={<ToolOutlined />}
+                  onClick={handleBulkAutofix}
+                >
+                  Fix All
+                </Button>
+              )
+            }
             className="content-card"
           >
             <List
@@ -301,8 +491,15 @@ const Quality = () => {
                     showIcon
                     action={
                       issue.fix_available && (
-                        <Button size="small" type="primary">
-                          Auto Fix
+                        <Button 
+                          size="small" 
+                          type="primary"
+                          loading={fixingIssues.has(issue.id)}
+                          disabled={fixedIssues.has(issue.id)}
+                          onClick={() => handleAutofix(issue)}
+                          icon={fixedIssues.has(issue.id) ? <CheckCircleOutlined /> : <ToolOutlined />}
+                        >
+                          {fixedIssues.has(issue.id) ? 'Fixed' : 'Auto Fix'}
                         </Button>
                       )
                     }
@@ -317,6 +514,17 @@ const Quality = () => {
                 description="Your application meets all quality standards!"
                 type="success"
                 showIcon
+              />
+            )}
+            
+            {qualityReport.issues && qualityReport.issues.length > 0 && 
+             qualityReport.issues.every(issue => !issue.fix_available || fixedIssues.has(issue.id)) && (
+              <Alert
+                message="All Fixable Issues Resolved!"
+                description="Great job! All automatically fixable issues have been resolved."
+                type="success"
+                showIcon
+                style={{ marginTop: '16px' }}
               />
             )}
           </Card>
@@ -362,7 +570,7 @@ const Quality = () => {
             style={{ marginTop: '24px' }}
           >
             <Space direction="vertical" style={{ width: '100%' }}>
-              {Object.entries(qualityReport.compliance).map(([key, value]) => (
+              {qualityReport.compliance && Object.entries(qualityReport.compliance).map(([key, value]) => (
                 <div key={key}>
                   <Text>{key.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</Text>
                   <Progress 
@@ -372,6 +580,9 @@ const Quality = () => {
                   />
                 </div>
               ))}
+              {!qualityReport.compliance && (
+                <Text type="secondary">No compliance data available</Text>
+              )}
             </Space>
           </Card>
         </Col>

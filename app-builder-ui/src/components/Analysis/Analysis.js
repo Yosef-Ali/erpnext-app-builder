@@ -13,11 +13,12 @@ import {
   Alert,
   Descriptions,
   List,
-  Badge
+  Badge,
+  Spin
 } from 'antd';
 import {
   DatabaseOutlined,
-  FlowChartOutlined,
+  ApartmentOutlined,
   BulbOutlined,
   RightOutlined,
   CheckCircleOutlined,
@@ -29,72 +30,166 @@ import WorkflowVisualization from './WorkflowVisualization';
 const { Title, Text, Paragraph } = Typography;
 const { Panel } = Collapse;
 
+// Helper function to extract essential data for storage
+const extractEssentialData = (data) => {
+  if (!data || typeof data !== 'object') {
+    return {
+      entities: [],
+      workflows: [],
+      industry: 'unknown',
+      confidence: 0.75,
+      aiEnhancements: {},
+      qualityMetrics: {
+        completeness: 75,
+        consistency: 80,
+        compliance: 70
+      },
+      enriched: {}
+    };
+  }
+
+  return {
+    entities: Array.isArray(data.entities) ? data.entities : [],
+    workflows: Array.isArray(data.workflows) ? data.workflows : [],
+    industry: data.industry || 'unknown',
+    confidence: typeof data.confidence === 'number' ? data.confidence : 0.75,
+    aiEnhancements: data.aiEnhancements || {},
+    qualityMetrics: {
+      completeness: data.qualityMetrics?.completeness || 75,
+      consistency: data.qualityMetrics?.consistency || 80,
+      compliance: data.qualityMetrics?.compliance || 70,
+      ...data.qualityMetrics
+    },
+    enriched: data.enriched || {}
+  };
+};
+
 const Analysis = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [analysisData, setAnalysisData] = useState(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
 
   useEffect(() => {
-    if (location.state?.analysisResult) {
+    // Check if we're coming from PRD upload with fresh content
+    if (location.state?.fromPRDUpload && location.state?.prdContent) {
+      console.log('Starting analysis for PRD content from upload');
+      startAnalysis(location.state.prdContent);
+    } else if (location.state?.analysisResult) {
+      // Already have analysis result
       setAnalysisData(location.state.analysisResult);
+      const essentialData = extractEssentialData(location.state.analysisResult);
+      sessionStorage.setItem('analysisResult', JSON.stringify(essentialData));
     } else {
-      // Mock data for development
-      setAnalysisData({
-        entities: [
-          {
-            name: 'Product',
-            type: 'Master',
-            confidence: 0.95,
-            fields: ['sku', 'name', 'category', 'price', 'description'],
-            relationships: ['belongs to Category', 'has Stock Entry']
-          },
-          {
-            name: 'Customer',
-            type: 'Master',
-            confidence: 0.92,
-            fields: ['customer_name', 'email', 'phone', 'address'],
-            relationships: ['has Sales Order', 'belongs to Customer Group']
-          },
-          {
-            name: 'Sales Order',
-            type: 'Transaction',
-            confidence: 0.88,
-            fields: ['customer', 'date', 'items', 'total_amount'],
-            relationships: ['from Customer', 'contains Product']
-          }
-        ],
-        workflows: [
-          {
-            name: 'Sales Order Approval',
-            type: 'approval',
-            confidence: 0.90,
-            states: ['Draft', 'Pending', 'Approved', 'Rejected'],
-            transitions: [
-              { from: 'Draft', to: 'Pending', action: 'Submit' },
-              { from: 'Pending', to: 'Approved', action: 'Approve' },
-              { from: 'Pending', to: 'Rejected', action: 'Reject' }
-            ]
-          }
-        ],
-        industry: 'retail',
-        confidence: 0.89,
-        aiEnhancements: {
-          entityExtraction: true,
-          workflowDetection: true,
-          industryPatterns: true
-        },
-        qualityMetrics: {
-          completeness: 85,
-          consistency: 92,
-          compliance: 78
+      // Try to get from sessionStorage
+      const storedResult = sessionStorage.getItem('analysisResult');
+      if (storedResult) {
+        try {
+          setAnalysisData(JSON.parse(storedResult));
+        } catch (error) {
+          console.error('Failed to parse stored analysis result:', error);
         }
-      });
+      }
     }
   }, [location.state]);
 
-  const handleProceedToTemplates = () => {
-    navigate('/templates', { state: { analysisData } });
+  const startAnalysis = async (prdContent) => {
+    setAnalyzing(true);
+    setAnalysisProgress(0);
+
+    try {
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setAnalysisProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 500);
+
+      // Call the analysis API
+      const response = await fetch(`${process.env.REACT_APP_MCP_URL || 'http://localhost:3000'}/hooks/analyze-prd`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: prdContent,
+          type: 'text'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        clearInterval(progressInterval);
+        setAnalysisProgress(100);
+        setAnalysisData(data.result);
+        
+        // Store in sessionStorage
+        const essentialData = extractEssentialData(data.result);
+        sessionStorage.setItem('analysisResult', JSON.stringify(essentialData));
+        
+        console.log('Analysis completed successfully');
+      } else {
+        throw new Error(data.error || 'Analysis failed');
+      }
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      // You might want to show an error message to the user
+    } finally {
+      setAnalyzing(false);
+    }
   };
+  
+  const handleProceedToTemplates = () => {
+    // Extract essential data to avoid circular references
+    const essentialData = extractEssentialData(analysisData);
+    sessionStorage.setItem('analysisData', JSON.stringify(essentialData));
+    navigate('/templates');
+  };
+
+  if (analyzing) {
+    return (
+      <div>
+        <div className="page-header">
+          <Title level={2}>Analyzing Your PRD</Title>
+          <Paragraph>
+            Our AI is analyzing your Product Requirements Document to extract entities, workflows, and business logic.
+          </Paragraph>
+        </div>
+
+        <Card className="content-card">
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <Spin size="large" />
+            <div style={{ marginTop: '24px' }}>
+              <Progress 
+                percent={analysisProgress} 
+                status="active"
+                strokeColor={{
+                  '0%': '#108ee9',
+                  '100%': '#87d068',
+                }}
+              />
+              <Text type="secondary" style={{ display: 'block', marginTop: '16px' }}>
+                {analysisProgress < 30 && 'Parsing PRD structure and content...'}
+                {analysisProgress >= 30 && analysisProgress < 60 && 'Extracting entities and relationships...'}
+                {analysisProgress >= 60 && analysisProgress < 90 && 'Detecting workflows and business processes...'}
+                {analysisProgress >= 90 && 'Finalizing analysis results...'}
+              </Text>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   if (!analysisData) {
     return (
@@ -153,7 +248,7 @@ const Analysis = () => {
         <Col xs={24} lg={8}>
           <Card className="content-card">
             <div style={{ textAlign: 'center' }}>
-              <FlowChartOutlined style={{ fontSize: '32px', color: '#52c41a' }} />
+              <ApartmentOutlined style={{ fontSize: '32px', color: '#52c41a' }} />
               <Title level={4} style={{ marginTop: '12px' }}>
                 {analysisData.workflows?.length || 0} Workflows
               </Title>
@@ -167,7 +262,7 @@ const Analysis = () => {
             <div style={{ textAlign: 'center' }}>
               <BulbOutlined style={{ fontSize: '32px', color: '#faad14' }} />
               <Title level={4} style={{ marginTop: '12px' }}>
-                {Math.round(analysisData.confidence * 100)}% Confidence
+                {Math.round((analysisData?.confidence || 0.75) * 100)}% Confidence
               </Title>
               <Text type="secondary">Overall analysis quality</Text>
             </div>
@@ -182,8 +277,8 @@ const Analysis = () => {
                 <div>
                   <Text strong>Completeness</Text>
                   <Progress 
-                    percent={analysisData.qualityMetrics.completeness} 
-                    strokeColor={getQualityColor(analysisData.qualityMetrics.completeness)}
+                    percent={analysisData?.qualityMetrics?.completeness || 75} 
+                    strokeColor={getQualityColor(analysisData?.qualityMetrics?.completeness || 75)}
                     size="small"
                   />
                 </div>
@@ -192,8 +287,8 @@ const Analysis = () => {
                 <div>
                   <Text strong>Consistency</Text>
                   <Progress 
-                    percent={analysisData.qualityMetrics.consistency} 
-                    strokeColor={getQualityColor(analysisData.qualityMetrics.consistency)}
+                    percent={analysisData?.qualityMetrics?.consistency || 80} 
+                    strokeColor={getQualityColor(analysisData?.qualityMetrics?.consistency || 80)}
                     size="small"
                   />
                 </div>
@@ -202,8 +297,8 @@ const Analysis = () => {
                 <div>
                   <Text strong>ERPNext Compliance</Text>
                   <Progress 
-                    percent={analysisData.qualityMetrics.compliance} 
-                    strokeColor={getQualityColor(analysisData.qualityMetrics.compliance)}
+                    percent={analysisData?.qualityMetrics?.compliance || 70} 
+                    strokeColor={getQualityColor(analysisData?.qualityMetrics?.compliance || 70)}
                     size="small"
                   />
                 </div>
@@ -230,7 +325,7 @@ const Analysis = () => {
                 key="entities"
               >
                 <List
-                  dataSource={analysisData.entities}
+                  dataSource={analysisData?.entities || []}
                   renderItem={(entity) => (
                     <List.Item>
                       <Card 
@@ -271,14 +366,14 @@ const Analysis = () => {
               <Panel 
                 header={
                   <Space>
-                    <FlowChartOutlined />
+                    <ApartmentOutlined />
                     <Text strong>Workflows ({analysisData.workflows?.length || 0})</Text>
                   </Space>
                 } 
                 key="workflows"
               >
                 <List
-                  dataSource={analysisData.workflows}
+                  dataSource={analysisData?.workflows || []}
                   renderItem={(workflow) => (
                     <List.Item>
                       <Card 

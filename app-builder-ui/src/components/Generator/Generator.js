@@ -15,14 +15,16 @@ import {
   Spin,
   Collapse,
   Descriptions,
-  Divider
+  Divider,
+  Switch,
+  Radio
 } from 'antd';
 import {
   CheckCircleOutlined,
   LoadingOutlined,
   ExclamationCircleOutlined,
   DatabaseOutlined,
-  FlowChartOutlined,
+  ApartmentOutlined,
   SettingOutlined,
   RocketOutlined
 } from '@ant-design/icons';
@@ -30,6 +32,7 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ApiService from '../../services/ApiService';
+import GenerationTracker from './GenerationTracker';
 
 const { Title, Text, Paragraph } = Typography;
 const { Panel } = Collapse;
@@ -45,11 +48,14 @@ const Generator = () => {
   const [generationStatus, setGenerationStatus] = useState('');
   const [generatedApp, setGeneratedApp] = useState(null);
   const [qualityReport, setQualityReport] = useState(null);
+  const [prdContent, setPrdContent] = useState('');
+  const [useRealTimeGeneration, setUseRealTimeGeneration] = useState(true);
 
   useEffect(() => {
     if (location.state?.analysisData && location.state?.selectedTemplates) {
       setAnalysisData(location.state.analysisData);
       setSelectedTemplates(location.state.selectedTemplates);
+      setPrdContent(location.state.prdContent || '');
     } else {
       // Mock data for development
       setAnalysisData({
@@ -64,6 +70,43 @@ const Generator = () => {
           features: ['Inventory Management', 'POS Interface']
         }
       ]);
+      setPrdContent(`# Retail Management System PRD
+
+## Overview
+A comprehensive retail management system for point of sale, inventory, and customer management.
+
+## Business Requirements
+
+### Product Management
+- Product catalog with categories and variations
+- SKU management and barcode scanning
+- Pricing and discount management
+- Stock tracking and alerts
+
+### Customer Management
+- Customer profiles and contact information
+- Purchase history and loyalty tracking
+- Customer segmentation and targeting
+- Communication and notification system
+
+### Sales Management
+- Point of sale interface
+- Order processing and fulfillment
+- Payment processing and receipts
+- Sales reporting and analytics
+
+## Technical Requirements
+- Web-based application
+- Mobile responsive design
+- Real-time inventory updates
+- Integration with payment gateways
+- User authentication and role management
+
+## Success Metrics
+- Reduce checkout time by 40%
+- Improve inventory accuracy to 99%
+- Increase customer retention by 25%
+- System uptime of 99.9%`);
     }
   }, [location.state]);
 
@@ -217,6 +260,17 @@ const Generator = () => {
     }
   };
 
+  const handleGenerationComplete = (result) => {
+    setGeneratedApp(result.app_structure);
+    setQualityReport(result.quality_report);
+    setCurrentStep(2);
+  };
+
+  const handleGenerationError = (error) => {
+    console.error('Generation error:', error);
+    setCurrentStep(0);
+  };
+
   const generationSteps = [
     {
       title: 'Configure',
@@ -295,15 +349,48 @@ const Generator = () => {
                   </Descriptions>
                 </div>
 
-                <Button
-                  type="primary"
-                  size="large"
-                  icon={<RocketOutlined />}
-                  onClick={generateApp}
-                  style={{ width: '100%' }}
-                >
-                  Start Generation
-                </Button>
+                <div>
+                  <div style={{ marginBottom: '16px' }}>
+                    <Space>
+                      <Text strong>Generation Method:</Text>
+                      <Radio.Group 
+                        value={useRealTimeGeneration ? 'realtime' : 'mock'} 
+                        onChange={(e) => setUseRealTimeGeneration(e.target.value === 'realtime')}
+                      >
+                        <Radio value="realtime">Real-time Processing</Radio>
+                        <Radio value="mock">Mock Generation</Radio>
+                      </Radio.Group>
+                    </Space>
+                  </div>
+                  
+                  {useRealTimeGeneration ? (
+                    <div>
+                      <Alert
+                        message="Real-time Generation"
+                        description="This will use the actual generation pipeline with step-by-step tracking and validation. You'll see live progress updates for each step."
+                        type="info"
+                        showIcon
+                        style={{ marginBottom: '16px' }}
+                      />
+                      
+                      <GenerationTracker 
+                        prdContent={prdContent}
+                        onComplete={handleGenerationComplete}
+                        onError={handleGenerationError}
+                      />
+                    </div>
+                  ) : (
+                    <Button
+                      type="primary"
+                      size="large"
+                      icon={<RocketOutlined />}
+                      onClick={generateApp}
+                      style={{ width: '100%' }}
+                    >
+                      Start Mock Generation
+                    </Button>
+                  )}
+                </div>
               </Space>
             </Card>
           </Col>
@@ -321,7 +408,7 @@ const Generator = () => {
                 </div>
 
                 <div>
-                  <FlowChartOutlined style={{ color: '#52c41a' }} />
+                  <ApartmentOutlined style={{ color: '#52c41a' }} />
                   <Text strong style={{ marginLeft: '8px' }}>Workflows</Text>
                   <br />
                   <Text type="secondary" style={{ marginLeft: '24px' }}>

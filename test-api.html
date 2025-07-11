@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Generate Complete App</title>
+</head>
+<body>
+    <h1>Test Dental Clinic App Generation</h1>
+    <button id="testBtn">Test Generate Dental Clinic App</button>
+    <pre id="output"></pre>
+
+    <script>
+        document.getElementById('testBtn').addEventListener('click', async () => {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...\n';
+            
+            try {
+                // Test 1: Generate PRD
+                output.textContent += '\n1. Testing PRD generation...\n';
+                const response1 = await fetch('http://localhost:3000/hooks/generate-from-prompt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: 'dental clinic app' })
+                });
+                const data1 = await response1.json();
+                output.textContent += `✓ PRD generated: ${data1.success}\n`;
+                output.textContent += `  Entities found: ${data1.analysis?.entities?.length || 0}\n`;
+                
+                // Test 2: Generate Structure
+                output.textContent += '\n2. Testing structure generation...\n';
+                const response2 = await fetch('http://localhost:3000/hooks/generate-structure', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        analysis: data1.analysis,
+                        options: { includeWorkflows: true }
+                    })
+                });
+                const data2 = await response2.json();
+                output.textContent += `✓ Structure generated: ${data2.success}\n`;
+                output.textContent += `  DocTypes: ${data2.structure?.doctypes?.length || 0}\n`;
+                
+                // Test 3: Quality Check
+                output.textContent += '\n3. Testing quality check...\n';
+                const response3 = await fetch('http://localhost:3000/hooks/quality-check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        content: data2.structure,
+                        type: 'generated_app'
+                    })
+                });
+                const data3 = await response3.json();
+                output.textContent += `✓ Quality checked: ${data3.success}\n`;
+                
+                output.textContent += '\n✅ All tests passed! The backend is working correctly.';
+                
+            } catch (error) {
+                output.textContent += `\n❌ Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

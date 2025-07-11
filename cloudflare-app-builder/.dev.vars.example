@@ -1,0 +1,26 @@
+# GitHub OAuth (for authentication)
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+COOKIE_ENCRYPTION_KEY=your_random_encryption_key
+
+# Frappe Cloud Integration
+FRAPPE_CLOUD_API_URL=https://frappecloud.com/api/method
+FRAPPE_CLOUD_API_KEY=your_frappe_cloud_api_key
+FRAPPE_CLOUD_API_SECRET=your_frappe_cloud_api_secret
+
+# Multi-tenant App Building
+ALLOWED_BUILDERS=mekdesyared,teammate1,teammate2  # GitHub usernames who can build apps
+MAX_CONCURRENT_BUILDS=5
+BUILD_TIMEOUT_MINUTES=15
+
+# App Storage Configuration
+APP_STORAGE_URL=https://your-worker.your-subdomain.workers.dev
+SHARED_HOSTING_URL=https://shared.frappecloud.com
+
+# Webhook Configuration (for build notifications)
+WEBHOOK_SECRET=your_webhook_secret
+NOTIFICATION_WEBHOOK_URL=https://your-notification-endpoint.com/webhook
+
+# Optional: External services
+SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
+NODE_ENV=development

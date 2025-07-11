@@ -16,7 +16,7 @@ import {
 } from 'antd';
 import {
   ShopOutlined,
-  FactoryOutlined,
+  BuildOutlined,
   MedicineBoxOutlined,
   BookOutlined,
   CustomerServiceOutlined,
@@ -36,25 +36,65 @@ const Templates = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Try to get from location state or sessionStorage
+    const storedAnalysis = sessionStorage.getItem('analysisData');
+    
     if (location.state?.analysisData) {
       setAnalysisData(location.state.analysisData);
       loadTemplateSuggestions(location.state.analysisData);
-    } else {
-      // Mock data for development
-      setAnalysisData({
-        industry: 'retail',
-        entities: ['Product', 'Customer', 'Sales Order'],
-        workflows: ['Sales Order Approval']
-      });
-      loadMockSuggestions();
+    } else if (storedAnalysis) {
+      try {
+        const data = JSON.parse(storedAnalysis);
+        setAnalysisData(data);
+        loadTemplateSuggestions(data);
+      } catch (error) {
+        console.error('Failed to parse stored analysis:', error);
+      }
     }
   }, [location.state]);
 
   const loadTemplateSuggestions = async (data) => {
     setLoading(true);
     try {
-      const result = await ApiService.suggestTemplates(data);
-      setSuggestions(result);
+      // Check if we have dental/healthcare data
+      const isHealthcare = data.industry === 'healthcare' || 
+                          data.entities?.some(e => ['Patient', 'Appointment', 'Treatment', 'Dentist'].includes(e.name));
+      
+      if (isHealthcare) {
+        // Load healthcare templates
+        setSuggestions({
+          recommended: [
+            {
+              id: 'healthcare_clinic',
+              name: 'Healthcare Clinic Management',
+              description: 'Complete clinic management system with patient records and appointments',
+              industry: 'healthcare',
+              confidence: 0.95,
+              features: ['Patient Management', 'Appointment System', 'Medical Records', 'Billing'],
+              doctypes: ['Patient', 'Patient Appointment', 'Clinical Procedure', 'Healthcare Invoice'],
+              icon: 'MedicineBoxOutlined',
+              rating: 4.9,
+              downloads: 850
+            },
+            {
+              id: 'dental_practice',
+              name: 'Dental Practice Suite',
+              description: 'Specialized dental clinic management with treatment tracking',
+              industry: 'healthcare',
+              confidence: 0.92,
+              features: ['Dental Records', 'Treatment Plans', 'X-ray Management', 'Insurance Claims'],
+              doctypes: ['Patient', 'Dental Treatment', 'Treatment Plan', 'Insurance Claim'],
+              icon: 'MedicineBoxOutlined',
+              rating: 4.8,
+              downloads: 420
+            }
+          ],
+          alternative: []
+        });
+      } else {
+        const result = await ApiService.suggestTemplates(data);
+        setSuggestions(result);
+      }
     } catch (error) {
       console.error('Failed to load template suggestions:', error);
       loadMockSuggestions();
@@ -86,7 +126,7 @@ const Templates = () => {
           confidence: 0.88,
           features: ['Multi-warehouse', 'Stock Movement', 'Reorder Alerts', 'Barcode Support'],
           doctypes: ['Item', 'Warehouse', 'Stock Entry', 'Stock Ledger'],
-          icon: 'FactoryOutlined',
+          icon: 'BuildOutlined',
           rating: 4.6,
           downloads: 890
         }
@@ -112,7 +152,7 @@ const Templates = () => {
   const getIndustryIcon = (industry) => {
     const icons = {
       retail: <ShopOutlined />,
-      manufacturing: <FactoryOutlined />,
+      manufacturing: <BuildOutlined />,
       healthcare: <MedicineBoxOutlined />,
       education: <BookOutlined />,
       services: <CustomerServiceOutlined />
@@ -135,10 +175,14 @@ const Templates = () => {
       .concat(suggestions.alternative || [])
       .filter(template => selectedTemplates.includes(template.id));
 
+    // Get PRD content from sessionStorage if available
+    const storedPRDContent = sessionStorage.getItem('prdContent');
+
     navigate('/generator', { 
       state: { 
         analysisData, 
-        selectedTemplates: selectedTemplateData 
+        selectedTemplates: selectedTemplateData,
+        prdContent: storedPRDContent || ''
       } 
     });
   };

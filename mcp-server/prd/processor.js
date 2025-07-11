@@ -19,14 +19,25 @@ class PRDProcessor {
     // Run through pipeline
     for (const step of pipeline) {
       try {
-        result = await this.hooks.execute(
+        const hookResult = await this.hooks.execute(
           step.type,
           step.name,
           result,
           context
         );
+        
+        // Extract the actual result from the wrapper
+        if (hookResult && hookResult.success && hookResult.result) {
+          result = hookResult.result;
+        } else {
+          console.error(`Invalid hook result for ${step.name}:`, hookResult);
+          continue;
+        }
+        
         // Accumulate context
-        Object.assign(context, result.context || {});
+        if (result.context) {
+          Object.assign(context, result.context);
+        }
       } catch (error) {
         console.error(`Pipeline error at ${step.name}:`, error);
         result.errors = result.errors || [];
@@ -37,8 +48,8 @@ class PRDProcessor {
       }
     }
 
-    // Enrich with context
-    result.enriched = await this.context.analyze(result);
+    // Enrich with context  
+    result.enriched = await this.context.analyze(result.content || content);
 
     return result;
   }
@@ -67,9 +78,19 @@ class PRDProcessor {
           analysis,
           { options, structure }
         );
-        structure[genType + 's'] = generated;
+        
+        // Extract result from wrapper if needed
+        if (generated && generated.success && generated.result) {
+          structure[genType + 's'] = generated.result;
+        } else if (generated && !generated.success) {
+          console.error(`Generator ${genType} failed:`, generated.error);
+          structure[genType + 's'] = [];
+        } else {
+          structure[genType + 's'] = generated || [];
+        }
       } catch (error) {
         console.error(`Generation error for ${genType}:`, error);
+        structure[genType + 's'] = [];
       }
     }
 

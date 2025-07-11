@@ -3,6 +3,211 @@
     height: 100vh !important;
     background: var(--ant-color-bg-layout) !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    overflow: hidden;
+}
+
+/* Claude Desktop-style Sidebar */
+.claude-sidebar {
+    background: var(--ant-color-bg-layout) !important;
+    border-right: 1px solid var(--ant-color-border-secondary) !important;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+.claude-sidebar .ant-layout-sider-children {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Chat History Items */
+.chat-history-item {
+    padding: 8px 16px;
+    margin: 2px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.chat-history-item:hover {
+    background: var(--ant-color-bg-text-hover) !important;
+}
+
+.chat-history-item.active {
+    background: var(--ant-color-primary-bg) !important;
+    border-color: var(--ant-color-primary) !important;
+}
+
+/* Chat Tabs Container */
+.chat-tabs-container {
+    height: 100vh;
+    background: var(--ant-color-bg-container);
+}
+
+.chat-tabs-container .ant-tabs {
+    height: 100%;
+}
+
+.chat-tabs-container .ant-tabs-content-holder {
+    overflow: auto; /* Allow scrolling instead of hidden */
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
+    position: relative;
+    height: calc(100vh - 60px); /* Account for tab header */
+}
+
+.chat-tabs-container .ant-tabs-tabpane {
+    height: 100%;
+    overflow: auto; /* Allow scrolling for content */
+}
+
+/* Tab Navigation Styling */
+.chat-tabs-container .ant-tabs-nav {
+    margin-bottom: 0 !important;
+    background: var(--ant-color-bg-layout);
+    border-bottom: 1px solid var(--ant-color-border-secondary);
+    padding: 0 !important;
+}
+
+.chat-tabs-container .ant-tabs-nav-wrap {
+    padding: 0 !important;
+}
+
+/* Individual tab styling */
+.chat-tabs-container .ant-tabs-tab {
+    padding: 16px 24px !important;
+    margin-right: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--ant-color-text-secondary) !important;
+    font-weight: 400;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* Tab hover effect */
+.chat-tabs-container .ant-tabs-tab:not(.ant-tabs-tab-disabled):hover {
+    background: var(--ant-color-fill-quaternary) !important;
+    color: var(--ant-color-text) !important;
+}
+
+/* Active tab styling */
+.chat-tabs-container .ant-tabs-tab-active {
+    background: var(--ant-color-bg-container) !important;
+    color: var(--ant-color-primary) !important;
+    font-weight: 500;
+}
+
+/* Active tab indicator line */
+.chat-tabs-container .ant-tabs-ink-bar {
+    background: var(--ant-color-primary) !important;
+    height: 3px !important;
+    border-radius: 0 !important;
+}
+
+/* Disabled/muted tabs styling */
+.chat-tabs-container .ant-tabs-tab-disabled {
+    opacity: 0.35 !important;
+    pointer-events: none;
+    color: var(--ant-color-text-quaternary) !important;
+    background: transparent !important;
+}
+
+/* Muted tabs should still be visible but clearly inactive */
+.chat-tabs-container .ant-tabs-tab-disabled .ant-tabs-tab-btn {
+    cursor: not-allowed;
+}
+
+/* Remove any default borders */
+.chat-tabs-container .ant-tabs-nav::before {
+    display: none !important;
+}
+
+/* Tab Content Areas */
+.tab-content-placeholder {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ant-color-text-secondary);
+    background: var(--ant-color-bg-container);
+}
+
+/* Responsive Adjustments for New Layout */
+@media (max-width: 1200px) {
+    .claude-sidebar {
+        position: fixed !important;
+        z-index: 1000 !important;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .claude-sidebar.visible {
+        transform: translateX(0);
+    }
+    
+    .app-builder-container .ant-layout {
+        margin-left: 0 !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .chat-tabs-container .ant-tabs-tab {
+        padding: 12px 16px !important;
+        font-size: 13px;
+    }
+    
+    .chat-tabs-container .ant-tabs-tab .ant-tabs-tab-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-tabs-container .ant-tabs-nav {
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+    }
+    
+    .chat-tabs-container .ant-tabs-nav .ant-tabs-nav-wrap {
+        overflow: visible !important;
+    }
+    
+    .chat-tabs-container .ant-tabs-nav .ant-tabs-tab-list {
+        display: flex;
+        white-space: nowrap;
+    }
+    
+    .chat-tabs-container .ant-tabs-tab {
+        padding: 12px 12px !important;
+        min-width: 70px;
+        text-align: center;
+        flex-shrink: 0;
+        font-size: 12px;
+    }
+    
+    /* Make sure all tabs are visible on mobile */
+    .chat-tabs-container .ant-tabs-tab-disabled {
+        opacity: 0.3 !important;
+        display: flex !important;
+    }
+    
+    /* Custom scrollbar for mobile tab navigation */
+    .chat-tabs-container .ant-tabs-nav::-webkit-scrollbar {
+        height: 2px;
+    }
+    
+    .chat-tabs-container .ant-tabs-nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .chat-tabs-container .ant-tabs-nav::-webkit-scrollbar-thumb {
+        background: var(--ant-color-border);
+        border-radius: 1px;
+    }
 }
 
 /* Sidebar customization */
@@ -42,17 +247,60 @@
 
 /* Mobile Responsive Design */
 @media (max-width: 768px) {
-    .app-sidebar {
+    .claude-sidebar {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
         height: 100vh !important;
         z-index: 1000 !important;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3) !important;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .claude-sidebar.visible {
+        transform: translateX(0) !important;
     }
 
     .main-layout {
         margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .sidebar-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+
+    /* Show toggle button only on mobile */
+    .desktop-only {
+        display: none !important;
+    }
+}
+
+/* Desktop-specific styles */
+@media (min-width: 769px) {
+    .mobile-only {
+        display: none !important;
+    }
+    
+    .claude-sidebar {
+        position: fixed !important;
+        transform: translateX(0) !important;
     }
 }
 
@@ -63,4 +311,412 @@
 
 .ant-layout-sider-trigger {
     display: none !important;
+}
+
+/* Enhanced Chat Interface Styles */
+.chat-message-enter {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.chat-message-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Loading dots animation */
+@keyframes loading-dots {
+    0%, 20% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    80%, 100% {
+        opacity: 0;
+    }
+}
+
+.loading-dots span {
+    animation: loading-dots 1.4s infinite;
+}
+
+.loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* Floating animation for template cards */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translateY(-20px) rotate(180deg);
+        opacity: 0.6;
+    }
+}
+
+/* Smooth transitions */
+.chat-input-container {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat-input-container:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Message hover effects */
+.message-card {
+    transition: all 0.2s ease;
+}
+
+.message-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Template card animations */
+.template-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.template-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Custom scrollbar */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #bfbfbf;
+}
+
+/* Dark mode scrollbar */
+[data-theme="dark"] .chat-messages::-webkit-scrollbar-thumb {
+    background: #424242;
+}
+
+[data-theme="dark"] .chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #595959;
+}
+
+/* Responsive improvements */
+@media (max-width: 1024px) {
+    .chat-canvas-layout {
+        flex-direction: column !important;
+    }
+    
+    .chat-column {
+        width: 100% !important;
+        height: 50% !important;
+    }
+    
+    .canvas-column {
+        width: 100% !important;
+        height: 50% !important;
+        border-left: none !important;
+        border-top: 1px solid var(--ant-color-border-secondary) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-header {
+        padding: 20px 16px !important;
+    }
+    
+    .welcome-title {
+        font-size: 24px !important;
+    }
+    
+    .template-grid {
+        padding: 0 16px !important;
+    }
+    
+    .chat-input-container {
+        margin: 0 16px !important;
+        padding: 8px !important;
+    }
+    
+    .message-container {
+        padding: 0 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .template-card {
+        height: 180px !important;
+    }
+    
+    .chat-input-buttons {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 4px !important;
+        align-items: center !important;
+        flex-shrink: 0 !important;
+    }
+    
+    .chat-input-container {
+        flex-wrap: nowrap !important;
+        align-items: flex-end !important;
+    }
+    
+    .send-button {
+        min-width: 60px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* Ensure all input buttons are visible on mobile */
+    .chat-input-buttons > * {
+        display: flex !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+/* Enhanced focus states */
+.ant-input:focus,
+.ant-input-focused {
+    border-color: var(--ant-color-primary) !important;
+    box-shadow: 0 0 0 2px var(--ant-color-primary-bg) !important;
+}
+
+/* Button hover improvements */
+.ant-btn:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+.ant-btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3) !important;
+}
+
+/* Loading state improvements */
+.ant-spin-container {
+    transition: all 0.3s ease;
+}
+
+/* Canvas tab improvements */
+.ant-tabs-tab {
+    transition: all 0.2s ease;
+}
+
+.ant-tabs-tab:hover {
+    transform: translateY(-1px);
+}
+
+/* Progress bar styling */
+.ant-progress-line {
+    border-radius: 10px;
+}
+
+.ant-progress-bg {
+    border-radius: 10px !important;
+    background: linear-gradient(90deg, var(--ant-color-primary), var(--ant-color-primary-active)) !important;
+}
+
+/* Card shadow improvements */
+.ant-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ant-card-hoverable:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Typography improvements */
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4,
+.ant-typography h5 {
+    letter-spacing: -0.02em;
+    font-weight: 600;
+}
+
+/* Enhanced borders */
+.enhanced-border {
+    border: 1px solid;
+    border-image: linear-gradient(45deg, var(--ant-color-primary), var(--ant-color-primary-active)) 1;
+}
+
+/* Hamburger Menu Button */
+.hamburger-menu-btn {
+    /* Styles now handled inline in component */
+}
+
+.hamburger-menu-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.hamburger-menu-btn:focus {
+    border-color: var(--ant-color-primary) !important;
+    box-shadow: 0 0 0 2px var(--ant-color-primary-bg) !important;
+}
+
+/* Ensure button is always visible */
+.hamburger-menu-btn {
+    display: flex !important;
+}
+
+/* Force visibility across all screen sizes */
+@media (max-width: 768px) {
+    .hamburger-menu-btn {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .hamburger-menu-btn {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Message Card Styles */
+.message-card {
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.message-card.expanded {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.message-card.system-message {
+    opacity: 0.9;
+}
+
+/* Auto-height cards for short content */
+.message-card[style*="height: auto"] {
+    height: auto !important;
+    max-height: none !important;
+}
+
+/* Short content cards - no transitions needed */
+.message-card:not(.expanded):not(.collapsed) {
+    transition: box-shadow 0.2s ease;
+}
+
+.message-content {
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.message-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.message-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.message-content::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 2px;
+}
+
+.message-content::-webkit-scrollbar-thumb:hover {
+    background: #bfbfbf;
+}
+
+/* Dark mode scrollbar for message content */
+[data-theme="dark"] .message-content::-webkit-scrollbar-thumb {
+    background: #424242;
+}
+
+[data-theme="dark"] .message-content::-webkit-scrollbar-thumb:hover {
+    background: #595959;
+}
+
+/* Message List Styles */
+.message-list {
+    scroll-behavior: smooth;
+}
+
+.message-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.message-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 3px;
+}
+
+.message-list::-webkit-scrollbar-thumb:hover {
+    background: #bfbfbf;
+}
+
+/* Dark mode scrollbar for message list */
+[data-theme="dark"] .message-list::-webkit-scrollbar-thumb {
+    background: #424242;
+}
+
+[data-theme="dark"] .message-list::-webkit-scrollbar-thumb:hover {
+    background: #595959;
+}
+
+/* Process Indicator Animations */
+@keyframes thinking {
+    0%, 20% { opacity: 0.3; }
+    50% { opacity: 1; }
+    80%, 100% { opacity: 0.3; }
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.thinking-dots {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.thinking-dots span {
+    animation: thinking 1.4s infinite;
+    font-size: 8px;
+    color: var(--ant-color-primary);
+}
+
+.thinking-dots span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.thinking-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.thinking-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.typewriter-cursor span {
+    animation: blink 1s infinite;
+    font-weight: bold;
+    color: var(--ant-color-primary);
 }

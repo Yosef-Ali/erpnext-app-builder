@@ -11,10 +11,16 @@
     "@ant-design/icons": "^5.2.5",
     "antd": "^5.8.4",
     "react-markdown": "^8.0.7",
-    "react-syntax-highlighter": "^15.5.0"
+    "react-syntax-highlighter": "^15.5.0",
+    "zustand": "^4.4.1",
+    "zod": "^3.22.2",
+    "react-hook-form": "^7.45.4",
+    "@hookform/resolvers": "^3.3.1",
+    "date-fns": "^2.30.0",
+    "uuid": "^9.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PORT=3001 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

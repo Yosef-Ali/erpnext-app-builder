@@ -1,0 +1,26 @@
+{
+  "name": "cloudflare-frappe-app-builder",
+  "version": "1.0.0",
+  "description": "Remote Cloudflare-based ERPNext App Builder for Multiple Apps",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail",
+    "test": "wrangler dev --local",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "durable-mcp": "^0.9.0",
+    "mcp-remote": "^1.0.0",
+    "oauth-provider": "^1.0.0",
+    "zod": "^3.23.0",
+    "itty-router": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^3.50.0"
+  }
+}

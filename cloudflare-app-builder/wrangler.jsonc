@@ -1,0 +1,55 @@
+{
+  "name": "cloudflare-frappe-app-builder",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "OAUTH_KV",
+      "id": "<Add-KV-ID>",
+      "preview_id": "<Add-Preview-KV-ID>"
+    },
+    {
+      "binding": "APP_STORAGE",
+      "id": "<Add-APP-STORAGE-KV-ID>",
+      "preview_id": "<Add-APP-STORAGE-PREVIEW-KV-ID>"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "APP_BUCKET",
+      "bucket_name": "frappe-apps-storage"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "APP_BUILDER",
+        "class_name": "AppBuilderDO"
+      },
+      {
+        "name": "BUILD_QUEUE",
+        "class_name": "BuildQueueDO"
+      }
+    ]
+  },
+  "queues": {
+    "producers": [
+      {
+        "queue": "app-build-queue",
+        "binding": "BUILD_QUEUE"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "app-build-queue",
+        "max_batch_size": 1,
+        "max_retries": 3,
+        "dead_letter_queue": "app-build-dlq"
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+# GitHub OAuth (for authentication)
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+COOKIE_ENCRYPTION_KEY=your_random_encryption_key
+
+# Frappe/ERPNext Connection
+FRAPPE_BASE_URL=http://localhost:8000
+FRAPPE_API_KEY=your_frappe_api_key
+FRAPPE_API_SECRET=your_frappe_api_secret
+
+# Optional: Sentry monitoring
+SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
+NODE_ENV=development

@@ -1,0 +1,362 @@
+{
+    "common_fields": {
+        "basic": [
+            {
+                "fieldname": "title",
+                "fieldtype": "Data",
+                "label": "Title",
+                "reqd": 1,
+                "bold": 1,
+                "in_list_view": 1,
+                "in_standard_filter": 1
+            },
+            {
+                "fieldname": "description",
+                "fieldtype": "Text Editor",
+                "label": "Description"
+            },
+            {
+                "fieldname": "status",
+                "fieldtype": "Select",
+                "label": "Status",
+                "options": "Active\nInactive",
+                "default": "Active"
+            }
+        ],
+        "contact": [
+            {
+                "fieldname": "email",
+                "fieldtype": "Data",
+                "label": "Email",
+                "options": "Email"
+            },
+            {
+                "fieldname": "phone",
+                "fieldtype": "Data",
+                "label": "Phone",
+                "options": "Phone"
+            },
+            {
+                "fieldname": "mobile",
+                "fieldtype": "Data",
+                "label": "Mobile",
+                "options": "Phone"
+            },
+            {
+                "fieldname": "address",
+                "fieldtype": "Small Text",
+                "label": "Address"
+            }
+        ],
+        "financial": [
+            {
+                "fieldname": "amount",
+                "fieldtype": "Currency",
+                "label": "Amount"
+            },
+            {
+                "fieldname": "tax_amount",
+                "fieldtype": "Currency",
+                "label": "Tax Amount"
+            },
+            {
+                "fieldname": "total_amount",
+                "fieldtype": "Currency",
+                "label": "Total Amount",
+                "read_only": 1
+            },
+            {
+                "fieldname": "currency",
+                "fieldtype": "Link",
+                "label": "Currency",
+                "options": "Currency"
+            }
+        ],
+        "dates": [
+            {
+                "fieldname": "start_date",
+                "fieldtype": "Date",
+                "label": "Start Date"
+            },
+            {
+                "fieldname": "end_date",
+                "fieldtype": "Date",
+                "label": "End Date"
+            },
+            {
+                "fieldname": "due_date",
+                "fieldtype": "Date",
+                "label": "Due Date"
+            },
+            {
+                "fieldname": "completion_date",
+                "fieldtype": "Date",
+                "label": "Completion Date"
+            }
+        ],
+        "audit": [
+            {
+                "fieldname": "created_by",
+                "fieldtype": "Link",
+                "label": "Created By",
+                "options": "User",
+                "read_only": 1
+            },
+            {
+                "fieldname": "creation_date",
+                "fieldtype": "Datetime",
+                "label": "Creation Date",
+                "read_only": 1
+            },
+            {
+                "fieldname": "modified_by",
+                "fieldtype": "Link",
+                "label": "Modified By",
+                "options": "User",
+                "read_only": 1
+            },
+            {
+                "fieldname": "modified_date",
+                "fieldtype": "Datetime",
+                "label": "Modified Date",
+                "read_only": 1
+            }
+        ]
+    },
+    "entity_specific": {
+        "customer": [
+            {
+                "fieldname": "customer_name",
+                "fieldtype": "Data",
+                "label": "Customer Name",
+                "reqd": 1,
+                "bold": 1
+            },
+            {
+                "fieldname": "customer_type",
+                "fieldtype": "Select",
+                "label": "Customer Type",
+                "options": "Individual\nCompany"
+            },
+            {
+                "fieldname": "customer_group",
+                "fieldtype": "Link",
+                "label": "Customer Group",
+                "options": "Customer Group"
+            },
+            {
+                "fieldname": "territory",
+                "fieldtype": "Link",
+                "label": "Territory",
+                "options": "Territory"
+            }
+        ],
+        "supplier": [
+            {
+                "fieldname": "supplier_name",
+                "fieldtype": "Data",
+                "label": "Supplier Name",
+                "reqd": 1,
+                "bold": 1
+            },
+            {
+                "fieldname": "supplier_type",
+                "fieldtype": "Select",
+                "label": "Supplier Type",
+                "options": "Individual\nCompany"
+            },
+            {
+                "fieldname": "supplier_group",
+                "fieldtype": "Link",
+                "label": "Supplier Group",
+                "options": "Supplier Group"
+            }
+        ],
+        "product": [
+            {
+                "fieldname": "item_code",
+                "fieldtype": "Data",
+                "label": "Item Code",
+                "reqd": 1,
+                "unique": 1
+            },
+            {
+                "fieldname": "item_name",
+                "fieldtype": "Data",
+                "label": "Item Name",
+                "reqd": 1
+            },
+            {
+                "fieldname": "item_group",
+                "fieldtype": "Link",
+                "label": "Item Group",
+                "options": "Item Group"
+            },
+            {
+                "fieldname": "uom",
+                "fieldtype": "Link",
+                "label": "Unit of Measure",
+                "options": "UOM"
+            },
+            {
+                "fieldname": "rate",
+                "fieldtype": "Currency",
+                "label": "Rate"
+            }
+        ],
+        "order": [
+            {
+                "fieldname": "order_date",
+                "fieldtype": "Date",
+                "label": "Order Date",
+                "default": "Today",
+                "reqd": 1
+            },
+            {
+                "fieldname": "delivery_date",
+                "fieldtype": "Date",
+                "label": "Delivery Date"
+            },
+            {
+                "fieldname": "priority",
+                "fieldtype": "Select",
+                "label": "Priority",
+                "options": "Low\nMedium\nHigh\nUrgent"
+            }
+        ],
+        "project": [
+            {
+                "fieldname": "project_name",
+                "fieldtype": "Data",
+                "label": "Project Name",
+                "reqd": 1,
+                "bold": 1
+            },
+            {
+                "fieldname": "project_type",
+                "fieldtype": "Link",
+                "label": "Project Type",
+                "options": "Project Type"
+            },
+            {
+                "fieldname": "priority",
+                "fieldtype": "Select",
+                "label": "Priority",
+                "options": "Low\nMedium\nHigh"
+            },
+            {
+                "fieldname": "percent_complete",
+                "fieldtype": "Percent",
+                "label": "% Complete"
+            }
+        ],
+        "employee": [
+            {
+                "fieldname": "employee_name",
+                "fieldtype": "Data",
+                "label": "Employee Name",
+                "reqd": 1,
+                "bold": 1
+            },
+            {
+                "fieldname": "employee_number",
+                "fieldtype": "Data",
+                "label": "Employee Number",
+                "unique": 1
+            },
+            {
+                "fieldname": "designation",
+                "fieldtype": "Link",
+                "label": "Designation",
+                "options": "Designation"
+            },
+            {
+                "fieldname": "department",
+                "fieldtype": "Link",
+                "label": "Department",
+                "options": "Department"
+            },
+            {
+                "fieldname": "date_of_joining",
+                "fieldtype": "Date",
+                "label": "Date of Joining"
+            }
+        ]
+    },
+    "section_breaks": {
+        "basic_info": {
+            "fieldname": "basic_info_section",
+            "fieldtype": "Section Break",
+            "label": "Basic Information"
+        },
+        "contact_info": {
+            "fieldname": "contact_section",
+            "fieldtype": "Section Break",
+            "label": "Contact Information"
+        },
+        "financial_info": {
+            "fieldname": "financial_section",
+            "fieldtype": "Section Break",
+            "label": "Financial Information"
+        },
+        "dates_section": {
+            "fieldname": "dates_section",
+            "fieldtype": "Section Break",
+            "label": "Important Dates"
+        },
+        "audit_section": {
+            "fieldname": "audit_section",
+            "fieldtype": "Section Break",
+            "label": "Audit Information",
+            "collapsible": 1
+        }
+    },
+    "naming_patterns": {
+        "auto_increment": "format:{PREFIX}-{####}",
+        "year_based": "format:{PREFIX}-{YY}-{####}",
+        "field_based": "field:title",
+        "prompt": "Prompt"
+    },
+    "permissions": {
+        "standard": [
+            {
+                "role": "System Manager",
+                "read": 1,
+                "write": 1,
+                "create": 1,
+                "delete": 1,
+                "share": 1,
+                "export": 1,
+                "import": 1
+            },
+            {
+                "role": "All",
+                "read": 1
+            }
+        ],
+        "restricted": [
+            {
+                "role": "System Manager",
+                "read": 1,
+                "write": 1,
+                "create": 1,
+                "delete": 1
+            }
+        ],
+        "public": [
+            {
+                "role": "System Manager",
+                "read": 1,
+                "write": 1,
+                "create": 1,
+                "delete": 1
+            },
+            {
+                "role": "All",
+                "read": 1,
+                "write": 1,
+                "create": 1
+            }
+        ]
+    }
+}

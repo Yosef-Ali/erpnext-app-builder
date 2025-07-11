@@ -1,0 +1,79 @@
+/* Hamburger Menu Button - Fixed Positioning */
+.hamburger-menu-btn {
+    position: fixed !important;
+    top: 16px !important;
+    left: 16px !important; /* Changed from right to left */
+    z-index: 1002 !important;
+    background: var(--ant-color-bg-container) !important;
+    border: 1px solid var(--ant-color-border) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 8px !important;
+    width: 40px !important; /* Slightly smaller */
+    height: 40px !important; /* Slightly smaller */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+    color: var(--ant-color-text) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.hamburger-menu-btn:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    background: var(--ant-color-bg-text-hover) !important;
+}
+
+.hamburger-menu-btn:focus {
+    border-color: var(--ant-color-primary) !important;
+    box-shadow: 0 0 0 2px var(--ant-color-primary-bg) !important;
+}
+
+/* Ensure tabs don't overlap with hamburger menu */
+.chat-tabs-container {
+    padding-left: 60px; /* Space for hamburger button */
+    transition: padding-left 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hamburger-menu-btn {
+        position: fixed !important;
+        top: 12px !important;
+        left: 12px !important;
+        width: 36px !important;
+        height: 36px !important;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        z-index: 1003 !important; /* Higher z-index on mobile */
+    }
+    
+    .chat-tabs-container {
+        padding-left: 56px; /* Adjusted for smaller button */
+    }
+}
+
+@media (min-width: 769px) {
+    .hamburger-menu-btn {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Ensure hamburger button doesn't interfere with sidebar */
+.claude-sidebar.visible + .main-layout .hamburger-menu-btn {
+    z-index: 1001; /* Lower than sidebar overlay */
+}
+
+/* Dark mode specific styles for hamburger button */
+[data-theme="dark"] .hamburger-menu-btn {
+    background: var(--ant-color-bg-elevated) !important;
+    border-color: var(--ant-color-border-secondary) !important;
+}
+
+[data-theme="dark"] .hamburger-menu-btn:hover {
+    background: var(--ant-color-fill-quaternary) !important;
+}

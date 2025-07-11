@@ -1,0 +1,14 @@
+node_modules/
+.dev.vars
+dist/
+*.log
+.DS_Store
+.wrangler/
+.env
+.env.local
+.env.*.local
+*.tgz
+*.tar.gz
+coverage/
+.nyc_output/
+.cache/

@@ -16,6 +16,13 @@ const { TextArea } = Input;
 
 const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMessage, isLoading, hasMessages = false }) => {
     const { token } = theme.useToken();
+    
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good morning';
+        if (hour < 17) return 'Good afternoon';
+        return 'Good evening';
+    };
 
     // Template categories (similar to the screenshot tabs)
     const templateCategories = [
@@ -180,28 +187,50 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
         <Col xs={24} sm={12} lg={8} xl={6} key={template.id}>
             <Card
                 hoverable
+                className="template-card"
                 style={{
-                    height: '200px',
+                    height: '220px',
                     marginBottom: '16px',
-                    borderRadius: '12px',
-                    cursor: 'pointer'
+                    borderRadius: '16px',
+                    cursor: 'pointer',
+                    border: `1px solid ${token.colorBorderSecondary}`,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
                 }}
                 onClick={() => handleTemplateSelect(template)}
                 cover={
                     <div style={{
-                        height: '80px',
+                        height: '90px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: token.colorFillAlter,
-                        fontSize: '32px'
+                        background: `linear-gradient(135deg, ${token.colorPrimaryBg}, ${token.colorBgContainer})`,
+                        fontSize: '36px',
+                        borderRadius: '16px 16px 0 0',
+                        position: 'relative',
+                        overflow: 'hidden'
                     }}>
-                        {template.image}
+                        <div style={{
+                            position: 'absolute',
+                            top: '-50%',
+                            left: '-50%',
+                            width: '200%',
+                            height: '200%',
+                            background: `radial-gradient(circle, ${token.colorPrimary}10 0%, transparent 70%)`,
+                            animation: 'float 6s ease-in-out infinite'
+                        }} />
+                        <div style={{ zIndex: 1 }}>
+                            {template.image}
+                        </div>
                     </div>
                 }
             >
-                <div style={{ height: '120px', overflow: 'hidden' }}>
-                    <Title level={5} style={{ marginBottom: '8px', fontSize: '14px' }}>
+                <div style={{ height: '130px', overflow: 'hidden', padding: '4px' }}>
+                    <Title level={5} style={{ 
+                        marginBottom: '8px', 
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        lineHeight: 1.2
+                    }}>
                         {template.title}
                         {template.isGenerated && (
                             <Tag color="blue" size="small" style={{ marginLeft: '4px' }}>
@@ -209,17 +238,31 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
                             </Tag>
                         )}
                     </Title>
-                    <Text type="secondary" style={{ fontSize: '12px', display: 'block', marginBottom: '8px' }}>
+                    <Text type="secondary" style={{ 
+                        fontSize: '12px', 
+                        display: 'block', 
+                        marginBottom: '10px',
+                        lineHeight: 1.3
+                    }}>
                         {template.description}
                     </Text>
                     <div>
                         {template.features.slice(0, 2).map((feature, index) => (
-                            <Tag key={index} size="small" style={{ fontSize: '10px', marginBottom: '2px' }}>
+                            <Tag key={index} size="small" style={{ 
+                                fontSize: '10px', 
+                                marginBottom: '4px',
+                                borderRadius: '8px',
+                                border: `1px solid ${token.colorBorderSecondary}`,
+                                background: token.colorBgContainer
+                            }}>
                                 {feature}
                             </Tag>
                         ))}
                         {template.features.length > 2 && (
-                            <Tag size="small" color="default" style={{ fontSize: '10px' }}>
+                            <Tag size="small" color="default" style={{ 
+                                fontSize: '10px',
+                                borderRadius: '8px'
+                            }}>
                                 +{template.features.length - 2}
                             </Tag>
                         )}
@@ -232,13 +275,13 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
     return (
         <div style={{
             height: '100%',
-            overflow: 'auto',
+            overflow: 'hidden', // Prevent container overflow
             background: token.colorBgContainer,
             display: 'flex',
             flexDirection: 'column'
         }}>
             {/* Header and Chat Input - Centered Section */}
-            <div style={{
+            <div className="welcome-header" style={{
                 padding: '40px 24px 24px 24px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -246,9 +289,35 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
             }}>
                 {/* Header */}
                 <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-                    <Title level={2} style={{ marginBottom: '8px' }}>
-                        Good evening, how can I help you today?
+                    <div style={{ marginBottom: '16px' }}>
+                        <div style={{
+                            width: '80px',
+                            height: '80px',
+                            borderRadius: '50%',
+                            background: `linear-gradient(135deg, ${token.colorPrimary}, ${token.colorPrimaryActive})`,
+                            margin: '0 auto 24px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '36px',
+                            color: 'white',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.12)'
+                        }}>
+                            🤖
+                        </div>
+                    </div>
+                    <Title className="welcome-title" level={2} style={{ 
+                        marginBottom: '8px',
+                        background: `linear-gradient(135deg, ${token.colorPrimary}, ${token.colorPrimaryActive})`,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text'
+                    }}>
+                        {getGreeting()}, how can I help you today?
                     </Title>
+                    <Text type="secondary" style={{ fontSize: '16px', display: 'block' }}>
+                        I'm your AI assistant for building ERPNext applications. Choose a template below or describe what you'd like to build.
+                    </Text>
                 </div>
 
                 {/* Chat Input - Positioned in middle like the screenshot - Only show when no messages */}
@@ -307,39 +376,79 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
                         
                         {/* Sample Prompts */}
                         <div style={{ 
-                            marginTop: '16px', 
+                            marginTop: '20px', 
                             textAlign: 'center' 
                         }}>
-                            <Text type="secondary" style={{ fontSize: '12px', marginBottom: '8px', display: 'block' }}>
-                                Try these examples:
+                            <Text type="secondary" style={{ fontSize: '13px', marginBottom: '12px', display: 'block' }}>
+                                ✨ Quick start ideas:
                             </Text>
                             <Space wrap size={[8, 8]} style={{ justifyContent: 'center' }}>
                                 <Tag 
-                                    style={{ cursor: 'pointer', fontSize: '12px' }}
+                                    style={{ 
+                                        cursor: 'pointer', 
+                                        fontSize: '12px',
+                                        padding: '6px 12px',
+                                        borderRadius: '16px',
+                                        border: `1px solid ${token.colorBorderSecondary}`,
+                                        background: token.colorBgContainer,
+                                        transition: 'all 0.2s ease'
+                                    }}
                                     onClick={() => onSetInputValue('inventory management system for auto parts store')}
                                 >
                                     🚗 Auto parts inventory
                                 </Tag>
                                 <Tag 
-                                    style={{ cursor: 'pointer', fontSize: '12px' }}
+                                    style={{ 
+                                        cursor: 'pointer', 
+                                        fontSize: '12px',
+                                        padding: '6px 12px',
+                                        borderRadius: '16px',
+                                        border: `1px solid ${token.colorBorderSecondary}`,
+                                        background: token.colorBgContainer,
+                                        transition: 'all 0.2s ease'
+                                    }}
                                     onClick={() => onSetInputValue('restaurant management with table booking and kitchen orders')}
                                 >
                                     🍽️ Restaurant management
                                 </Tag>
                                 <Tag 
-                                    style={{ cursor: 'pointer', fontSize: '12px' }}
+                                    style={{ 
+                                        cursor: 'pointer', 
+                                        fontSize: '12px',
+                                        padding: '6px 12px',
+                                        borderRadius: '16px',
+                                        border: `1px solid ${token.colorBorderSecondary}`,
+                                        background: token.colorBgContainer,
+                                        transition: 'all 0.2s ease'
+                                    }}
                                     onClick={() => onSetInputValue('real estate property management and tenant portal')}
                                 >
                                     🏢 Property management
                                 </Tag>
                                 <Tag 
-                                    style={{ cursor: 'pointer', fontSize: '12px' }}
+                                    style={{ 
+                                        cursor: 'pointer', 
+                                        fontSize: '12px',
+                                        padding: '6px 12px',
+                                        borderRadius: '16px',
+                                        border: `1px solid ${token.colorBorderSecondary}`,
+                                        background: token.colorBgContainer,
+                                        transition: 'all 0.2s ease'
+                                    }}
                                     onClick={() => onSetInputValue('gym membership and class scheduling system')}
                                 >
                                     💪 Fitness center
                                 </Tag>
                                 <Tag 
-                                    style={{ cursor: 'pointer', fontSize: '12px' }}
+                                    style={{ 
+                                        cursor: 'pointer', 
+                                        fontSize: '12px',
+                                        padding: '6px 12px',
+                                        borderRadius: '16px',
+                                        border: `1px solid ${token.colorBorderSecondary}`,
+                                        background: token.colorBgContainer,
+                                        transition: 'all 0.2s ease'
+                                    }}
                                     onClick={() => onSetInputValue('law firm case management and billing')}
                                 >
                                     ⚖️ Legal practice
@@ -351,11 +460,13 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
             </div>
 
             {/* Templates Section - Full Width, Separate Container */}
-            <div style={{ 
+            <div className="template-grid" style={{ 
                 flex: 1,
-                padding: '0 24px 40px 24px',
+                padding: '0 24px 24px 24px', // Reduce bottom padding
                 display: 'flex',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                overflow: 'auto', // Allow scrolling for template cards
+                minHeight: 0 // Remove fixed height constraint
             }}>
                 <div style={{ 
                     width: '100%', 

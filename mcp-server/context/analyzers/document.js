@@ -82,6 +82,11 @@ class DocumentAnalyzer {
   extractSections(input) {
     const sections = [];
     
+    // Ensure input is a string
+    if (typeof input !== 'string') {
+      return sections;
+    }
+    
     for (const [type, pattern] of Object.entries(this.sectionPatterns)) {
       const matches = input.match(pattern);
       if (matches) {

@@ -1,43 +1,27 @@
 import React from 'react';
-import { Space, Button, Tooltip, Switch } from 'antd';
-import { SmileOutlined, MessageOutlined, AppstoreOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { Space, Button, Tooltip } from 'antd';
+import { SmileOutlined, MessageOutlined, AppstoreOutlined } from '@ant-design/icons';
 import useChatViewStore from './chatViewStore';
 
 const ChatViewSwitcher = () => {
-  const { viewMode, setViewMode, dynamicSwitchingEnabled, setDynamicSwitching } = useChatViewStore();
+  const { viewMode, setViewMode } = useChatViewStore();
   
   const handleViewChange = (mode) => {
     // Toggle functionality: if clicking the same mode, turn it off (go to default)
     if (viewMode === mode) {
-      setViewMode('chat', true); // Mark as user action
+      setViewMode('chat');
     } else {
-      setViewMode(mode, true); // Mark as user action
+      setViewMode(mode);
     }
   };
 
   return (
-    <div style={{ position: 'absolute', top: 80, right: 24, zIndex: 10 }}>
-      {/* Dynamic Switching Toggle */}
-      <div style={{ 
-        marginBottom: '8px', 
-        textAlign: 'center',
-        background: 'rgba(255, 255, 255, 0.9)',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        fontSize: '12px'
-      }}>
-        <Tooltip title={dynamicSwitchingEnabled ? 'Auto-switching enabled' : 'Manual mode only'}>
-          <Space size={4}>
-            <ThunderboltOutlined style={{ color: dynamicSwitchingEnabled ? '#1677ff' : '#999' }} />
-            <Switch
-              size="small"
-              checked={dynamicSwitchingEnabled}
-              onChange={setDynamicSwitching}
-            />
-          </Space>
-        </Tooltip>
-      </div>
-      
+    <div style={{ 
+      position: 'absolute', 
+      top: 20, // Move much higher up
+      right: 80, // Move left to avoid hamburger menu
+      zIndex: 1001 // Lower than hamburger but visible
+    }}>
       {/* View Mode Buttons */}
       <Space>
         <Tooltip title="Welcome Page">

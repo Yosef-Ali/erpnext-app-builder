@@ -1,0 +1,526 @@
+{
+    "retail": {
+        "name": "Retail Management",
+        "description": "Complete retail store management system",
+        "doctypes": [
+            {
+                "name": "Store",
+                "fields": [
+                    "store_name",
+                    "location",
+                    "manager",
+                    "contact_number",
+                    "email"
+                ],
+                "relationships": [
+                    "Customer",
+                    "Product",
+                    "Sales Order"
+                ]
+            },
+            {
+                "name": "Product Catalog",
+                "fields": [
+                    "product_name",
+                    "sku",
+                    "category",
+                    "price",
+                    "stock_level",
+                    "supplier"
+                ],
+                "relationships": [
+                    "Supplier",
+                    "Sales Order Item"
+                ]
+            },
+            {
+                "name": "Customer Loyalty",
+                "fields": [
+                    "customer",
+                    "points_earned",
+                    "points_redeemed",
+                    "tier_level"
+                ],
+                "relationships": [
+                    "Customer",
+                    "Sales Order"
+                ]
+            }
+        ],
+        "workflows": [
+            {
+                "name": "Sales Order Processing",
+                "states": [
+                    "Draft",
+                    "Confirmed",
+                    "Packed",
+                    "Shipped",
+                    "Delivered"
+                ],
+                "document_type": "Sales Order"
+            },
+            {
+                "name": "Inventory Replenishment",
+                "states": [
+                    "Stock Alert",
+                    "Purchase Request",
+                    "Order Placed",
+                    "Received"
+                ],
+                "document_type": "Purchase Order"
+            }
+        ],
+        "modules": [
+            "Stock",
+            "Selling",
+            "CRM",
+            "POS"
+        ],
+        "reports": [
+            "Daily Sales",
+            "Inventory Status",
+            "Customer Analysis"
+        ]
+    },
+    "manufacturing": {
+        "name": "Manufacturing Management",
+        "description": "Complete manufacturing process management",
+        "doctypes": [
+            {
+                "name": "Production Plan",
+                "fields": [
+                    "plan_name",
+                    "start_date",
+                    "end_date",
+                    "target_quantity",
+                    "status"
+                ],
+                "relationships": [
+                    "Item",
+                    "Work Order",
+                    "BOM"
+                ]
+            },
+            {
+                "name": "Quality Control",
+                "fields": [
+                    "inspection_date",
+                    "inspector",
+                    "quality_parameters",
+                    "result",
+                    "remarks"
+                ],
+                "relationships": [
+                    "Item",
+                    "Work Order",
+                    "Batch"
+                ]
+            },
+            {
+                "name": "Machine Maintenance",
+                "fields": [
+                    "machine_id",
+                    "maintenance_type",
+                    "scheduled_date",
+                    "completion_date",
+                    "cost"
+                ],
+                "relationships": [
+                    "Asset",
+                    "Employee"
+                ]
+            }
+        ],
+        "workflows": [
+            {
+                "name": "Production Order",
+                "states": [
+                    "Draft",
+                    "Planned",
+                    "In Progress",
+                    "Quality Check",
+                    "Completed"
+                ],
+                "document_type": "Work Order"
+            },
+            {
+                "name": "Quality Inspection",
+                "states": [
+                    "Pending",
+                    "In Progress",
+                    "Passed",
+                    "Failed",
+                    "Re-inspection"
+                ],
+                "document_type": "Quality Inspection"
+            }
+        ],
+        "modules": [
+            "Manufacturing",
+            "Stock",
+            "Quality Management",
+            "Maintenance"
+        ],
+        "reports": [
+            "Production Summary",
+            "Quality Reports",
+            "Machine Utilization"
+        ]
+    },
+    "healthcare": {
+        "name": "Healthcare Management",
+        "description": "Healthcare facility management system",
+        "doctypes": [
+            {
+                "name": "Patient Record",
+                "fields": [
+                    "patient_id",
+                    "patient_name",
+                    "date_of_birth",
+                    "gender",
+                    "contact",
+                    "emergency_contact"
+                ],
+                "relationships": [
+                    "Appointment",
+                    "Medical Record",
+                    "Insurance"
+                ]
+            },
+            {
+                "name": "Medical Record",
+                "fields": [
+                    "record_date",
+                    "diagnosis",
+                    "treatment",
+                    "prescription",
+                    "doctor",
+                    "notes"
+                ],
+                "relationships": [
+                    "Patient",
+                    "Doctor",
+                    "Appointment"
+                ]
+            },
+            {
+                "name": "Appointment",
+                "fields": [
+                    "appointment_date",
+                    "appointment_time",
+                    "patient",
+                    "doctor",
+                    "department",
+                    "status"
+                ],
+                "relationships": [
+                    "Patient",
+                    "Doctor",
+                    "Department"
+                ]
+            }
+        ],
+        "workflows": [
+            {
+                "name": "Patient Registration",
+                "states": [
+                    "New",
+                    "Registered",
+                    "Verified",
+                    "Active"
+                ],
+                "document_type": "Patient"
+            },
+            {
+                "name": "Appointment Booking",
+                "states": [
+                    "Requested",
+                    "Confirmed",
+                    "In Progress",
+                    "Completed",
+                    "Cancelled"
+                ],
+                "document_type": "Appointment"
+            }
+        ],
+        "modules": [
+            "Healthcare",
+            "HR",
+            "Accounts"
+        ],
+        "reports": [
+            "Patient Statistics",
+            "Doctor Schedule",
+            "Department Performance"
+        ]
+    },
+    "education": {
+        "name": "Education Management",
+        "description": "Educational institution management system",
+        "doctypes": [
+            {
+                "name": "Student Enrollment",
+                "fields": [
+                    "student_id",
+                    "student_name",
+                    "course",
+                    "enrollment_date",
+                    "academic_year",
+                    "status"
+                ],
+                "relationships": [
+                    "Student",
+                    "Course",
+                    "Academic Year"
+                ]
+            },
+            {
+                "name": "Course Management",
+                "fields": [
+                    "course_code",
+                    "course_name",
+                    "credits",
+                    "instructor",
+                    "schedule",
+                    "capacity"
+                ],
+                "relationships": [
+                    "Instructor",
+                    "Student",
+                    "Department"
+                ]
+            },
+            {
+                "name": "Grade Record",
+                "fields": [
+                    "student",
+                    "course",
+                    "assignment_type",
+                    "marks_obtained",
+                    "total_marks",
+                    "grade"
+                ],
+                "relationships": [
+                    "Student",
+                    "Course",
+                    "Instructor"
+                ]
+            }
+        ],
+        "workflows": [
+            {
+                "name": "Student Admission",
+                "states": [
+                    "Applied",
+                    "Under Review",
+                    "Accepted",
+                    "Enrolled",
+                    "Rejected"
+                ],
+                "document_type": "Student Application"
+            },
+            {
+                "name": "Grade Submission",
+                "states": [
+                    "Draft",
+                    "Submitted",
+                    "Reviewed",
+                    "Approved",
+                    "Published"
+                ],
+                "document_type": "Grade Record"
+            }
+        ],
+        "modules": [
+            "Education",
+            "HR",
+            "Accounts",
+            "Website"
+        ],
+        "reports": [
+            "Student Performance",
+            "Course Analytics",
+            "Faculty Workload"
+        ]
+    },
+    "services": {
+        "name": "Service Management",
+        "description": "Service-based business management",
+        "doctypes": [
+            {
+                "name": "Service Request",
+                "fields": [
+                    "request_id",
+                    "customer",
+                    "service_type",
+                    "priority",
+                    "assigned_to",
+                    "status",
+                    "description"
+                ],
+                "relationships": [
+                    "Customer",
+                    "Employee",
+                    "Service Contract"
+                ]
+            },
+            {
+                "name": "Service Contract",
+                "fields": [
+                    "contract_name",
+                    "customer",
+                    "service_scope",
+                    "start_date",
+                    "end_date",
+                    "contract_value"
+                ],
+                "relationships": [
+                    "Customer",
+                    "Service Request",
+                    "Project"
+                ]
+            },
+            {
+                "name": "Time Log",
+                "fields": [
+                    "employee",
+                    "project",
+                    "task",
+                    "hours",
+                    "date",
+                    "description",
+                    "billable"
+                ],
+                "relationships": [
+                    "Employee",
+                    "Project",
+                    "Task",
+                    "Customer"
+                ]
+            }
+        ],
+        "workflows": [
+            {
+                "name": "Service Request Processing",
+                "states": [
+                    "New",
+                    "Assigned",
+                    "In Progress",
+                    "Completed",
+                    "Closed"
+                ],
+                "document_type": "Service Request"
+            },
+            {
+                "name": "Project Delivery",
+                "states": [
+                    "Planning",
+                    "Execution",
+                    "Review",
+                    "Delivered",
+                    "Closed"
+                ],
+                "document_type": "Project"
+            }
+        ],
+        "modules": [
+            "Projects",
+            "CRM",
+            "Timesheet",
+            "Accounts"
+        ],
+        "reports": [
+            "Service Performance",
+            "Project Profitability",
+            "Resource Utilization"
+        ]
+    },
+    "ecommerce": {
+        "name": "E-commerce Management",
+        "description": "Online store and e-commerce management",
+        "doctypes": [
+            {
+                "name": "Online Order",
+                "fields": [
+                    "order_number",
+                    "customer",
+                    "order_date",
+                    "shipping_address",
+                    "payment_method",
+                    "order_status"
+                ],
+                "relationships": [
+                    "Customer",
+                    "Item",
+                    "Payment Entry"
+                ]
+            },
+            {
+                "name": "Product Review",
+                "fields": [
+                    "product",
+                    "customer",
+                    "rating",
+                    "review_text",
+                    "review_date",
+                    "verified_purchase"
+                ],
+                "relationships": [
+                    "Item",
+                    "Customer",
+                    "Sales Order"
+                ]
+            },
+            {
+                "name": "Shipping Tracking",
+                "fields": [
+                    "order",
+                    "tracking_number",
+                    "carrier",
+                    "shipping_date",
+                    "delivery_date",
+                    "status"
+                ],
+                "relationships": [
+                    "Sales Order",
+                    "Customer"
+                ]
+            }
+        ],
+        "workflows": [
+            {
+                "name": "Order Fulfillment",
+                "states": [
+                    "Received",
+                    "Payment Confirmed",
+                    "Packed",
+                    "Shipped",
+                    "Delivered"
+                ],
+                "document_type": "Sales Order"
+            },
+            {
+                "name": "Return Process",
+                "states": [
+                    "Return Requested",
+                    "Approved",
+                    "Item Received",
+                    "Refund Processed"
+                ],
+                "document_type": "Sales Return"
+            }
+        ],
+        "modules": [
+            "Selling",
+            "Stock",
+            "Accounts",
+            "Website",
+            "E Commerce"
+        ],
+        "reports": [
+            "Sales Analytics",
+            "Customer Behavior",
+            "Inventory Turnover"
+        ]
+    }
+}

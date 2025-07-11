@@ -8,11 +8,17 @@ RUN apk add --no-cache \
     make \
     g++
 
-# Copy MCP server code
-COPY . .
+# Install pnpm
+RUN npm install -g pnpm
 
-# Install dependencies
-RUN npm install
+# Copy package files first
+COPY mcp-server/package*.json ./
+
+# Install dependencies with pnpm
+RUN pnpm install
+
+# Copy MCP server code
+COPY mcp-server/ .
 
 EXPOSE 3000
 

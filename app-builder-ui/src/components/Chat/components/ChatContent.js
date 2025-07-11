@@ -4,6 +4,7 @@ import WelcomeSection from './WelcomeSection';
 import MessageList from './MessageList';
 import ChatInput from './ChatInput';
 import ChatViewSwitcher from './ChatViewSwitcher';
+import ResultCanvas from './ResultCanvas';
 import useChatViewStore from './chatViewStore';
 
 const { Content } = Layout;
@@ -19,70 +20,39 @@ const ChatContent = ({
     uploadProps,
     onSetInputValue,
     sidebarCollapsed,
-    setSidebarCollapsed
+    setSidebarCollapsed,
+    onToggleSidebar
 }) => {
     const { token } = theme.useToken();
     const hasMessages = messages.length > 0;
-    const { viewMode, smartSwitch } = useChatViewStore();
-
-    // Dynamic switching logic
+    const { viewMode } = useChatViewStore();
+    const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+    
     React.useEffect(() => {
-        // 1. Auto-switch from welcome to chat on first message
-        if (viewMode === 'welcome' && hasMessages) {
-            smartSwitch('chat', 'first_message');
-        }
-    }, [viewMode, hasMessages, smartSwitch]);
-
-    // Content analysis for smart switching
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+    
+    // Process state management
+    const [processState, setProcessState] = React.useState('thinking');
+    
     React.useEffect(() => {
-        if (messages.length > 0) {
-            const lastMessage = messages[messages.length - 1];
-            if (lastMessage && lastMessage.type === 'user') {
-                const content = lastMessage.content.toLowerCase();
-                
-                // Detect generation/output requests
-                const generationKeywords = [
-                    'generate app', 'create app', 'build app', 'show output', 
-                    'show result', 'create doctype', 'generate doctype',
-                    'build workflow', 'create workflow', 'show generated',
-                    'app generation', 'erpnext app', 'generate code'
-                ];
-                
-                const backToChatKeywords = [
-                    'back to chat', 'hide output', 'close canvas', 
-                    'chat only', 'focus on chat', 'minimize output'
-                ];
-                
-                // Switch to canvas mode for generation requests
-                if (generationKeywords.some(keyword => content.includes(keyword)) && viewMode !== 'chat+canvas') {
-                    smartSwitch('chat+canvas', 'generation_requested');
-                }
-                
-                // Switch back to chat for chat-focused requests
-                if (backToChatKeywords.some(keyword => content.includes(keyword)) && viewMode === 'chat+canvas') {
-                    smartSwitch('chat', 'chat_focused');
-                }
-            }
+        if (isLoading) {
+            // Simulate different process states
+            setProcessState('thinking');
+            const timer1 = setTimeout(() => setProcessState('reading'), 1000);
+            const timer2 = setTimeout(() => setProcessState('writing'), 2000);
+            
+            return () => {
+                clearTimeout(timer1);
+                clearTimeout(timer2);
+            };
         }
-    }, [messages, viewMode, smartSwitch]);
-
-    // Loading state detection for auto-canvas
-    React.useEffect(() => {
-        // Auto-switch to canvas when generation starts
-        if (isLoading && viewMode === 'chat') {
-            const lastMessage = messages[messages.length - 1];
-            if (lastMessage && lastMessage.content) {
-                const content = lastMessage.content.toLowerCase();
-                const isGenerationRequest = [
-                    'generate', 'create', 'build', 'make'
-                ].some(word => content.includes(word));
-                
-                if (isGenerationRequest) {
-                    smartSwitch('chat+canvas', 'generation_started');
-                }
-            }
-        }
-    }, [isLoading, viewMode, messages, smartSwitch]);
+    }, [isLoading]);
 
     // Force collapse sidebar ONLY for chat+canvas mode
     React.useEffect(() => {
@@ -97,9 +67,16 @@ const ChatContent = ({
             <ChatViewSwitcher />
             {viewMode === 'chat+canvas' ? (
                 /* Two column layout: Chat + Canvas */
-                <div style={{ display: 'flex', height: 'calc(100vh - 64px)' }}>
+                <div className="chat-canvas-layout" style={{ 
+                    display: 'flex', 
+                    height: 'calc(100vh - 64px)'
+                }}>
                     {/* Left: Chat Column */}
-                    <div style={{ width: '30%', display: 'flex', flexDirection: 'column' }}>
+                    <div className="chat-column" style={{ 
+                        width: '30%', 
+                        display: 'flex', 
+                        flexDirection: 'column'
+                    }}>
                         <Content
                             className="chat-content"
                             style={{
@@ -113,7 +90,8 @@ const ChatContent = ({
                                 messages={messages}
                                 isLoading={isLoading}
                                 messagesEndRef={messagesEndRef}
-                                renderMessage={renderMessage}
+                                onSetInputValue={onSetInputValue}
+                                processState={processState}
                             />
                         </Content>
                         <ChatInput
@@ -125,16 +103,15 @@ const ChatContent = ({
                         />
                     </div>
                     {/* Right: Canvas Column */}
-                    <div style={{ 
+                    <div className="canvas-column" style={{ 
                         width: '70%', 
                         background: token.colorBgLayout,
-                        borderLeft: `1px solid ${token.colorBorderSecondary}`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: token.colorTextSecondary
+                        borderLeft: `1px solid ${token.colorBorderSecondary}`
                     }}>
-                        Output/Canvas Area
+                        <ResultCanvas 
+                            isLoading={isLoading}
+                            content={messages.length > 0 ? messages[messages.length - 1]?.content : null}
+                        />
                     </div>
                 </div>
             ) : (
@@ -148,6 +125,7 @@ const ChatContent = ({
                                 padding: '0',
                                 overflow: 'auto',
                                 height: 'calc(100vh - 64px)',
+                                position: 'relative'
                             }}
                         >
                             <WelcomeSection
@@ -189,7 +167,8 @@ const ChatContent = ({
                                         messages={messages}
                                         isLoading={isLoading}
                                         messagesEndRef={messagesEndRef}
-                                        renderMessage={renderMessage}
+                                        onSetInputValue={onSetInputValue}
+                                        processState={processState}
                                     />
                                 </Content>
                                 <ChatInput
