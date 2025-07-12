@@ -44,21 +44,6 @@
     background: var(--ant-color-bg-container);
 }
 
-.chat-tabs-container .ant-tabs {
-    height: 100%;
-}
-
-.chat-tabs-container .ant-tabs-content-holder {
-    overflow: auto; /* Allow scrolling instead of hidden */
-    position: relative;
-    min-height: calc(100vh - 60px); /* Account for tab header */
-}
-
-.chat-tabs-container .ant-tabs-tabpane {
-    min-height: 100%;
-    overflow: auto; /* Allow scrolling for content */
-}
-
 /* Clean Ant Design Tabs - No Custom Styling */
 
 /* Use default Ant Design tab styling - no custom overrides */
@@ -351,6 +336,55 @@
     background: #bfbfbf;
 }
 
+/* Debug borders removed - issue solved */
+
+/* Template cards with proper scrolling */
+.welcome-section-tabs {
+    height: 70vh;
+    max-height: 70vh;
+}
+
+.welcome-section-tabs .ant-tabs {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.welcome-section-tabs .ant-tabs-content-holder {
+    flex: 1;
+    overflow: hidden;
+}
+
+.welcome-section-tabs .ant-tabs-content {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.welcome-section-tabs .ant-tabs-tabpane {
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Custom scrollbar for template tabs */
+.welcome-section-tabs .ant-tabs-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.welcome-section-tabs .ant-tabs-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.welcome-section-tabs .ant-tabs-content::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 3px;
+}
+
+.welcome-section-tabs .ant-tabs-content::-webkit-scrollbar-thumb:hover {
+    background: #bfbfbf;
+}
+
 /* Dark mode scrollbar */
 [data-theme="dark"] .chat-messages::-webkit-scrollbar-thumb {
     background: #424242;
@@ -390,6 +424,12 @@
     
     .template-grid {
         padding: 0 16px !important;
+    }
+    
+    /* Mobile adjustments for template tabs */
+    .welcome-section-tabs {
+        height: 50vh !important;
+        max-height: 50vh !important;
     }
     
     .chat-input-container {
@@ -622,6 +662,17 @@
 }
 
 /* Process Indicator Animations */
+@keyframes wave-loading {
+    0%, 60%, 100% {
+        transform: scale(0.8);
+        opacity: 0.4;
+    }
+    30% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
 @keyframes thinking {
     0%, 20% { opacity: 0.3; }
     50% { opacity: 1; }

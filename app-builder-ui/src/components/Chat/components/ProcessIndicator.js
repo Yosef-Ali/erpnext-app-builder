@@ -1,5 +1,5 @@
 import React from 'react';
-import { Space, Typography, Progress, theme } from 'antd';
+import { Space, Typography, theme } from 'antd';
 
 const { Text } = Typography;
 
@@ -8,54 +8,71 @@ const ProcessIndicator = ({ state }) => {
 
     const processStates = {
         thinking: { 
-            icon: '🤔', 
             text: 'Claude is thinking...', 
-            animation: 'dots' 
+            animation: 'wave' 
         },
         writing: { 
-            icon: '✍️', 
             text: 'Claude is writing...', 
-            animation: 'typewriter' 
+            animation: 'wave' 
         },
         reading: { 
-            icon: '👁️', 
             text: 'Processing your request...', 
-            animation: 'progress' 
+            animation: 'wave' 
         }
     };
 
     const currentState = processStates[state] || processStates.thinking;
 
     const renderAnimation = () => {
-        switch (currentState.animation) {
-            case 'dots':
-                return (
-                    <div className="thinking-dots">
-                        <span>●</span>
-                        <span>●</span>
-                        <span>●</span>
-                    </div>
-                );
-            case 'typewriter':
-                return (
-                    <div className="typewriter-cursor">
-                        <span>|</span>
-                    </div>
-                );
-            case 'progress':
-                return (
-                    <Progress 
-                        percent={75} 
-                        size="small" 
-                        status="active"
-                        showInfo={false}
-                        strokeColor={token.colorPrimary}
-                        style={{ width: '100px' }}
-                    />
-                );
-            default:
-                return null;
-        }
+        return (
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                marginLeft: '8px'
+            }}>
+                <div 
+                    style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        backgroundColor: token.colorTextSecondary,
+                        animation: 'wave-loading 1.4s infinite ease-in-out',
+                        animationDelay: '0s'
+                    }}
+                />
+                <div 
+                    style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        backgroundColor: token.colorTextSecondary,
+                        animation: 'wave-loading 1.4s infinite ease-in-out',
+                        animationDelay: '0.2s'
+                    }}
+                />
+                <div 
+                    style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        backgroundColor: token.colorTextSecondary,
+                        animation: 'wave-loading 1.4s infinite ease-in-out',
+                        animationDelay: '0.4s'
+                    }}
+                />
+                <div 
+                    style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        backgroundColor: token.colorTextSecondary,
+                        animation: 'wave-loading 1.4s infinite ease-in-out',
+                        animationDelay: '0.6s'
+                    }}
+                />
+            </div>
+        );
     };
 
     return (
@@ -66,13 +83,16 @@ const ProcessIndicator = ({ state }) => {
             borderRadius: '6px',
             border: `1px solid ${token.colorBorderSecondary}`
         }}>
-            <Space size={8} align="center">
-                <span style={{ fontSize: '16px' }}>{currentState.icon}</span>
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+            }}>
                 <Text type="secondary" style={{ fontSize: '12px', fontStyle: 'italic' }}>
                     {currentState.text}
                 </Text>
                 {renderAnimation()}
-            </Space>
+            </div>
         </div>
     );
 };

@@ -74,26 +74,27 @@ const useChatHistory = () => {
         }
     }, [chatHistory]);
     
-    const addOrUpdateChat = (messages, isLoading = false, hasErrors = false) => {
+    const addOrUpdateChat = (chatId, messages, isLoading = false, hasErrors = false) => {
         if (!messages || messages.length === 0) return;
         
-        const chatId = currentChatId || Date.now().toString();
+        const id = chatId || Date.now().toString();
         const title = generateChatTitle(messages);
         const status = getChatStatus(messages, isLoading, hasErrors);
         const now = new Date();
         
         const chatData = {
-            id: chatId,
+            id: id,
             title,
             status,
             date: now.toISOString(),
             lastUpdated: now.toISOString(),
             messageCount: messages.length,
-            preview: messages[messages.length - 1]?.content?.substring(0, 100) || ''
+            preview: messages[messages.length - 1]?.content?.substring(0, 100) || '',
+            messages: messages // Store full message data
         };
         
         setChatHistory(prev => {
-            const existingIndex = prev.findIndex(chat => chat.id === chatId);
+            const existingIndex = prev.findIndex(chat => chat.id === id);
             if (existingIndex >= 0) {
                 // Update existing chat
                 const updated = [...prev];
@@ -106,16 +107,20 @@ const useChatHistory = () => {
         });
         
         if (!currentChatId) {
-            setCurrentChatId(chatId);
+            setCurrentChatId(id);
         }
         
-        return chatId;
+        return id;
+    };
+    
+    const getChatMessages = (chatId) => {
+        const chat = chatHistory.find(chat => chat.id === chatId);
+        return chat?.messages || [];
     };
     
     const selectChat = (chat) => {
         setCurrentChatId(chat.id);
-        // Here you would typically load the chat messages
-        // This would be implemented with your message loading logic
+        // Messages are now loaded by the parent component using getChatMessages
     };
     
     const startNewChat = () => {
@@ -148,7 +153,8 @@ const useChatHistory = () => {
         selectChat,
         startNewChat,
         deleteChat,
-        renameChat
+        renameChat,
+        getChatMessages
     };
 };
 

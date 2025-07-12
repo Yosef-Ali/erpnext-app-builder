@@ -43,7 +43,8 @@ const AppBuilderChat = () => {
         selectChat,
         startNewChat,
         renameChat,
-        deleteChat
+        deleteChat,
+        getChatMessages
     } = useChatHistory();
 
     // Tab states for progressive activation
@@ -111,9 +112,9 @@ const AppBuilderChat = () => {
     // Update chat history when messages change
     useEffect(() => {
         if (messages.length > 0) {
-            addOrUpdateChat(messages, isLoading);
+            addOrUpdateChat(currentChatId, messages, isLoading);
         }
-    }, [messages, isLoading, addOrUpdateChat]);
+    }, [messages, isLoading, addOrUpdateChat, currentChatId]);
 
     // Progressive tab activation based on process stage
     const activateTab = (tabKey, hasContent = true, hasNotification = false) => {
@@ -175,19 +176,81 @@ const AppBuilderChat = () => {
         setInputValue('');
         setIsLoading(true);
         
-        // Simulate AI response
-        setTimeout(() => {
-            const responses = [
-                "I understand you want to build an ERPNext application. Let me analyze your requirements and suggest the best approach.",
-                "Based on your description, I'll create a comprehensive solution with the necessary doctypes, workflows, and configurations.",
-                "I'm generating the ERPNext application structure with custom fields, forms, and business logic tailored to your needs.",
-                "Your application is ready! I've created all the necessary components including doctypes, reports, and user permissions."
-            ];
+        try {
+            // Call the backend API for chat processing
+            const response = await fetch('/api/chat/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: inputValue,
+                    conversation_history: messages.slice(-5), // Send last 5 messages for context
+                    user_id: 'user_' + Date.now(),
+                    session_id: currentChatId || 'session_' + Date.now()
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
             
-            const responseIndex = Math.min(messages.length, responses.length - 1);
-            addSystemMessage(responses[responseIndex], 'info');
+            // Add the assistant's response
+            const assistantMessage = {
+                id: Date.now() + 1,
+                type: 'assistant',
+                content: data.response || data.message || 'I received your message and am processing it.',
+                timestamp: new Date(),
+                metadata: data.metadata || {}
+            };
+
+            setMessages(prev => [...prev, assistantMessage]);
+            
+            // If there's analysis data, update content data for other tabs
+            if (data.analysis) {
+                setContentData(prev => ({
+                    ...prev,
+                    analysis: data.analysis
+                }));
+                activateTab('analysis', true, true);
+            }
+            
+            // If there are template suggestions, update templates tab
+            if (data.templates) {
+                setContentData(prev => ({
+                    ...prev,
+                    templates: data.templates
+                }));
+                activateTab('templates', true, true);
+            }
+            
+            // If there's generation data, update generator tab
+            if (data.generation) {
+                setContentData(prev => ({
+                    ...prev,
+                    generator: data.generation
+                }));
+                activateTab('generator', true, true);
+            }
+
+        } catch (error) {
+            console.error('Error sending message:', error);
+            
+            // Fallback response for connection errors
+            const errorMessage = {
+                id: Date.now() + 1,
+                type: 'system',
+                content: 'I apologize, but I encountered an issue processing your request. Please check your connection and try again.',
+                timestamp: new Date(),
+                systemType: 'error'
+            };
+            
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
             setIsLoading(false);
-        }, 2000);
+        }
     };
 
     const handleNewChat = () => {
@@ -208,11 +271,22 @@ const AppBuilderChat = () => {
 
     const handleSelectChat = (chat) => {
         selectChat(chat);
-        // Auto-switch to chat-only mode when selecting Auto Parts App
-        if (chat.title && chat.title.includes('Auto Parts App')) {
+        
+        // Load existing chat messages instead of triggering new action
+        const existingMessages = getChatMessages(chat.id);
+        if (existingMessages && existingMessages.length > 0) {
+            setMessages(existingMessages);
+            // Reset any loading states
+            setIsLoading(false);
+            // Auto-switch to chat-only mode when selecting existing conversation
             setActiveTab('chat');
+            message.info(`Loaded conversation: ${chat.title}`);
+        } else {
+            // If no messages found, just show empty chat
+            setMessages([]);
+            setActiveTab('chat');
+            message.info(`Starting conversation: ${chat.title}`);
         }
-        message.info(`Loaded conversation: ${chat.title}`);
     };
 
     const uploadProps = {

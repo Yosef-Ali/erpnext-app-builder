@@ -93,8 +93,8 @@ const MessageList = ({ messages, isLoading, messagesEndRef, onSetInputValue, pro
                 );
             })}
             
-            {/* Loading indicator for new message */}
-            {isLoading && messages.length === 0 && (
+            {/* Loading indicator - appears after messages like Claude */}
+            {isLoading && (
                 <MessageCard
                     message={{
                         type: 'assistant',

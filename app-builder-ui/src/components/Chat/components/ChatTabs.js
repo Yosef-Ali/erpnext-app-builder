@@ -91,25 +91,31 @@ const ChatTabs = ({
         label: renderTabLabel(tab),
         children: (
             <div style={{
-                minHeight: 'calc(100vh - 140px)', // Adjust based on header height
-                background: token.colorBgContainer
+                height: '100%',
+                maxHeight: '100%',
+                background: token.colorBgContainer,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column'
             }}>
-                {tab.content || (
-                    <div style={{
-                        height: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: token.colorTextSecondary
-                    }}>
-                        <div style={{ textAlign: 'center' }}>
-                            {tab.icon}
-                            <div style={{ marginTop: '8px', fontSize: '14px' }}>
-                                {`${tab.label} content will appear here`}
+                {Array.isArray(tab.content)
+                    ? tab.content.map((item, idx) => item)
+                    : (tab.content || (
+                        <div style={{
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: token.colorTextSecondary
+                        }}>
+                            <div style={{ textAlign: 'center' }}>
+                                {tab.icon}
+                                <div style={{ marginTop: '8px', fontSize: '14px' }}>
+                                    {`${tab.label} content will appear here`}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    ))}
             </div>
         )
     }));

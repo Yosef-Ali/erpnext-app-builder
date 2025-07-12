@@ -145,46 +145,92 @@ const ChatContent = ({
                             />
                         </Content>
                     ) : (
-                        /* Chat Only Mode - Centered 800px container */
+                        /* Chat Only Mode - Fixed Layout with Sticky Input */
                         <div style={{ 
                             display: 'flex', 
                             flexDirection: 'column', 
                             height: 'calc(100vh - 64px)',
-                            justifyContent: 'center',
-                            alignItems: 'center',
                             background: token.colorBgContainer,
                         }}>
+                            {/* Chat Header */}
                             <div style={{
-                                width: '100%',
-                                maxWidth: '800px',
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'column'
+                                padding: '20px 24px 10px 24px',
+                                textAlign: 'center',
+                                borderBottom: `1px solid ${token.colorBorderSecondary}`,
+                                background: token.colorBgContainer,
+                                flexShrink: 0
                             }}>
-                                <Content
-                                    className="chat-content"
-                                    style={{
-                                        background: 'transparent',
-                                        padding: '0',
-                                        overflow: 'auto',
-                                        flex: 1,
-                                    }}
-                                >
-                                    <MessageList
-                                        messages={messages}
+                                <h2 style={{ 
+                                    margin: 0, 
+                                    fontSize: '20px',
+                                    fontWeight: 600,
+                                    color: token.colorText 
+                                }}>
+                                    Chat with AI Assistant
+                                </h2>
+                                <p style={{ 
+                                    margin: '4px 0 0 0', 
+                                    color: token.colorTextSecondary,
+                                    fontSize: '14px'
+                                }}>
+                                    Building ERPNext applications with intelligent assistance
+                                </p>
+                            </div>
+                            
+                            {/* Chat Messages - Scrollable Area */}
+                            <div style={{
+                                flex: 1,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                padding: '0 24px',
+                                overflow: 'hidden'
+                            }}>
+                                <div style={{
+                                    width: '100%',
+                                    maxWidth: '800px',
+                                    height: '100%',
+                                    overflow: 'auto'
+                                }}>
+                                    <Content
+                                        className="chat-content"
+                                        style={{
+                                            background: 'transparent',
+                                            padding: '20px 0',
+                                            minHeight: '100%'
+                                        }}
+                                    >
+                                        <MessageList
+                                            messages={messages}
+                                            isLoading={isLoading}
+                                            messagesEndRef={messagesEndRef}
+                                            onSetInputValue={onSetInputValue}
+                                            processState={processState}
+                                        />
+                                    </Content>
+                                </div>
+                            </div>
+
+                            {/* Chat Input - Sticky Bottom */}
+                            <div style={{
+                                flexShrink: 0,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                padding: '0 24px 20px 24px',
+                                background: token.colorBgContainer,
+                                borderTop: `1px solid ${token.colorBorderSecondary}`
+                            }}>
+                                <div style={{
+                                    width: '100%',
+                                    maxWidth: '800px'
+                                }}>
+                                    <ChatInput
+                                        value={inputValue}
+                                        onChange={onInputChange}
+                                        onSendMessage={onSendMessage}
                                         isLoading={isLoading}
-                                        messagesEndRef={messagesEndRef}
-                                        onSetInputValue={onSetInputValue}
-                                        processState={processState}
+                                        uploadProps={uploadProps}
                                     />
-                                </Content>
-                                <ChatInput
-                                    value={inputValue}
-                                    onChange={onInputChange}
-                                    onSendMessage={onSendMessage}
-                                    isLoading={isLoading}
-                                    uploadProps={uploadProps}
-                                />
+                                </div>
                             </div>
                         </div>
                     )}

@@ -274,7 +274,7 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
 
     return (
         <div style={{
-            minHeight: '100%',
+            minHeight: 'calc(100vh - 64px)',
             background: token.colorBgContainer,
             display: 'flex',
             flexDirection: 'column'
@@ -458,35 +458,29 @@ const WelcomeSection = ({ onSetInputValue, inputValue, onInputChange, onSendMess
                 )}
             </div>
 
-            {/* Templates Section - Full Width, Separate Container */}
-            <div className="template-grid" style={{ 
-                padding: '0 24px 24px 24px', // Reduce bottom padding
-                display: 'flex',
-                justifyContent: 'center',
-                minHeight: 0 // Remove fixed height constraint
+            {/* Templates Section - Simple Layout */}
+            <div style={{ 
+                padding: '0 24px 24px 24px'
             }}>
-                <div style={{ 
-                    width: '100%', 
-                    maxWidth: '1200px'
-                }}>
-                    <Tabs
-                        defaultActiveKey="all"
-                        centered
-                        size="large"
-                        type="line"
-                        items={templateCategories.map(category => ({
-                            key: category.key,
-                            label: category.label,
-                            children: (
-                                <Row gutter={[16, 16]} style={{
-                                    paddingTop: '24px'
-                                }}>
+                <Tabs
+                    className="welcome-section-tabs"
+                    defaultActiveKey="all"
+                    centered
+                    size="large"
+                    type="line"
+                    animated={false}
+                    items={templateCategories.map(category => ({
+                        key: category.key,
+                        label: category.label,
+                        children: (
+                            <div style={{ paddingTop: '24px' }}>
+                                <Row gutter={[16, 16]}>
                                     {category.templates.map(renderTemplateCard)}
                                 </Row>
-                            )
-                        }))}
-                    />
-                </div>
+                            </div>
+                        )
+                    }))}
+                />
             </div>
         </div>
     );
